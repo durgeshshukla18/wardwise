@@ -58,7 +58,7 @@ German nouns are always written with the article in its article colour and the n
 
 | Property | Value |
 | --- | --- |
-| Spacing scale | 4, 8, 12, 16, 24, 32, 48 px. Nothing outside the scale |
+| Spacing scale | 4, 8, 12, 16, 24, 32, 48 px. Nothing outside the scale, except 0 where a bar or rail meets an edge |
 | Corner radius | 6 px buttons and inputs, 8 px cards, 4 px chips |
 | Borders | 1 px `--line` on every card. Cards have no shadow |
 | Shadow | One token only, `--shadow`: `0 4px 16px rgba(23, 35, 45, 0.12)`. Used only on bottom sheets and menus |

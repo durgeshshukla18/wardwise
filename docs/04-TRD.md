@@ -197,6 +197,8 @@ Content is static JSON in the bundle. Only learner state is stored.
 | `feedback` | `id` | ts, screen, text, rating |
 | `events` | `id` | ts, name, props |
 
+Export file: one JSON object `{format: "wardwise-export", schemaVersion, exportedAt, tables}`, where `tables` holds all 10 tables as arrays of rows. Import (Phase 5) rejects a file whose `format` is wrong or whose `schemaVersion` is newer than the app's, and changes nothing.
+
 Keys and indexes: `id` values are string UUIDs. `profile` and `streak` hold one row each, with the fixed key `"me"`. `days.sessions` is a count. Indexes: `itemState.dueAt`, and `attempts.sessionId`, `attempts.itemId`, `attempts.ts`. IndexedDB cannot index booleans, so if `inMistakeBank` ever needs an index it is stored as 0 or 1.
 
 Store the schema version in Dexie and write a migration for every change. The export file includes the schema version and import rejects files with a newer version.

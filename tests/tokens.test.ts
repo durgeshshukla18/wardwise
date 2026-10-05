@@ -70,9 +70,11 @@ describe('spacing, sizes and radii', () => {
     const scale = numbers(propertyRow('Spacing scale').split('px')[0] ?? '');
     expect(scale).toEqual([4, 8, 12, 16, 24, 32, 48]);
     const numeric = [...spacing].filter(([name]) => /^--spacing-\d+$/.test(name));
+    // The doc allows 0 where a bar or rail meets an edge. It is the only value beyond the scale.
     expect(numeric.map(([name, value]) => [name, value])).toEqual(
-      scale.map((n) => [`--spacing-${n}`, `${n}px`]),
+      [0, ...scale].map((n) => [`--spacing-${n}`, `${n}px`]),
     );
+    expect(propertyRow('Spacing scale')).toMatch(/except 0/);
   });
 
   it('uses only component sizes named in the doc', () => {

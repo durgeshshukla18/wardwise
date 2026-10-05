@@ -17,7 +17,8 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "validate-content": "node scripts/validate-content.ts",
-    "seed-demo": "node scripts/seed-demo.ts"
+    "seed-demo": "node scripts/seed-demo.ts",
+    "screenshots": "SCREENSHOTS=1 playwright test screenshots"
   },
   "dependencies": {
     "@fontsource/noto-sans-devanagari": "5.3.0",

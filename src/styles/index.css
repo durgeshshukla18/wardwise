@@ -27,6 +27,8 @@
 
 @theme {
   /* Spacing scale, named by pixel value: p-16 is 16px. */
+  /* Zero is not a space. It is needed to pin bars and rails to an edge. */
+  --spacing-0: 0px;
   --spacing-4: 4px;
   --spacing-8: 8px;
   --spacing-12: 12px;
@@ -111,5 +113,16 @@
       transition-duration: 0s !important;
       animation-duration: 0s !important;
     }
+  }
+}
+
+/* Phone details from section 8: the home indicator area under bars. */
+@layer components {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pb-tabbar-safe {
+    padding-bottom: calc(var(--spacing-tabbar) + env(safe-area-inset-bottom));
   }
 }

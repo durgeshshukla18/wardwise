@@ -1,0 +1,10 @@
+[
+  { "id": "T01", "name": "Body parts", "mainLevel": "A1" },
+  { "id": "T02", "name": "Symptoms and pain", "mainLevel": "A1" },
+  { "id": "T03", "name": "Vital signs and numbers", "mainLevel": "A1 to A2" },
+  { "id": "T04", "name": "Patient admission and basics", "mainLevel": "A1" },
+  { "id": "T05", "name": "Ward and equipment", "mainLevel": "A1" },
+  { "id": "T06", "name": "Daily care: washing, eating, moving", "mainLevel": "A2" },
+  { "id": "T07", "name": "Medication and doses", "mainLevel": "A2" },
+  { "id": "T08", "name": "Questions to ask a patient", "mainLevel": "A2" }
+]

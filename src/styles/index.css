@@ -1,0 +1,115 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+/* Remove every Tailwind default so only section 7 and 8 values exist. */
+@theme {
+  --*: initial;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-tint: var(--primary-tint);
+  --color-correct: var(--correct);
+  --color-wrong: var(--wrong);
+  --color-attention: var(--attention);
+  --color-der: var(--der);
+  --color-die: var(--die);
+  --color-das: var(--das);
+
+  --shadow-sheet: var(--shadow);
+}
+
+@theme {
+  /* Spacing scale, named by pixel value: p-16 is 16px. */
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-48: 48px;
+
+  /* Fixed component sizes from section 7 and 8. Not spacing. */
+  --spacing-touch: 44px;
+  --spacing-button: 48px;
+  --spacing-option: 56px;
+  --spacing-tabbar: 56px;
+  --spacing-mic: 64px;
+  --spacing-rail: 232px;
+  --container-column: 640px;
+  --container-main: 1040px;
+
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+
+  --font-serif: 'Source Serif 4', serif;
+  --font-sans: 'Source Sans 3', sans-serif;
+  --font-hindi: 'Noto Sans Devanagari', sans-serif;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  --text-12: 12px;
+  --text-14: 14px;
+  --text-16: 16px;
+  --text-18: 18px;
+  --text-22: 22px;
+  --text-28: 28px;
+  --text-36: 36px;
+
+  --leading-body: 1.5;
+  --leading-heading: 1.25;
+  --tracking-label: 0.06em;
+
+  --radius-chip: 4px;
+  --radius-control: 6px;
+  --radius-card: 8px;
+  --radius-full: 9999px;
+
+  --ease-out: ease-out;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-16);
+    line-height: var(--leading-body);
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-heading);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0s !important;
+      animation-duration: 0s !important;
+    }
+  }
+}

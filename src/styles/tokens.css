@@ -1,0 +1,19 @@
+/* Section 7 tokens (docs/03-DESIGN.md). tests/tokens.test.ts checks these against the doc. */
+:root {
+  --paper: #f5f3ee;
+  --surface: #ffffff;
+  --ink: #17232d;
+  --ink-soft: #55636e;
+  --line: #d9d5ca;
+  --primary: #0e6b6b;
+  --primary-hover: #0a5454;
+  --primary-tint: #e1eeec;
+  --correct: #1f7a4d;
+  --wrong: #b3261e;
+  --attention: #b45309;
+  --der: #2b5c8a;
+  --die: #a63d5b;
+  --das: #3e7d4b;
+
+  --shadow: 0 4px 16px rgba(23, 35, 45, 0.12);
+}

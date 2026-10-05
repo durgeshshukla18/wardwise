@@ -132,6 +132,18 @@ The options for E2 to E5 are built by a pure function that takes a random genera
 
 The app never shows a "you are finished" screen. When today's session is done it shows when the next review is due and offers an optional Extra round.
 
+### Session runner
+
+How a session behaves on screen (S05 to S07). The rules above decide what is asked. These decide how it is shown and saved.
+
+- **Saved after every exercise.** Each completed exercise saves its attempt, the item's new state, today's count and the streak in one transaction. Leaving after 3 answers keeps those 3. A Learn card (E1) is saved as an attempt too, which is how the daily limit of 6 new items is counted. Every completed exercise counts toward the 5 that make a streak day.
+- **Progress** reads "n of N", where N is the current queue length. It grows when a retry or a quiz is added, and the bar never moves backward when it does.
+- **Answering.** Tapping an option answers at once (E2 to E5). E6 and E9 take typed text with Submit, and Skip submits an empty answer, which counts as wrong (`meaning` for E6, `number` for E9). Every answer opens the feedback panel with Next. E1 has only "Got it".
+- **Keys on a desktop.** 1 to 4 choose an option, Enter submits or continues, Space plays the audio and Shift+Space plays it slowly. Keys are left alone while typing in a field and on a focused button.
+- **Audio.** Text read out is the `spoken` field if the item has one, otherwise the German. One tap plays at the audio speed from Settings. A second tap within 2 seconds, or a long press, plays at 0.8. With no German voice, E4 and E9 are replaced by E3 and E6 and the first Learn card says so with a short how-to.
+- **Leaving.** The Leave button and the browser Back button both ask "Leave this session? Your answers so far are saved." A session is only held in memory, so a refresh goes back to Today. The session is saved as not completed.
+- **Summary.** Items right are items answered with no wrong answer. Items to revisit are items answered wrong at least once. Learn cards and same-session retries count for neither. It shows when the next review is, or how many items are still due now, and offers Back to Today and Extra round. After a session Today shows the new streak and due count.
+
 ### Placement
 
 Onboarding shows 5 A1 items as E3 questions. The five are the first A1 word with an article, in id order, from each of T01 to T05, and their option sets use a fixed random seed, so the questions are identical on every run. 0 to 2 correct places the learner at A1. 3 to 5 correct asks "You seem ready to start at A2. Start there?" and she chooses. Placement only decides where new items come from. It never locks anything. Placement answers are checked with the checker and scored with `placementLevel`. Placement never calls the scheduler, so it creates no item state and changes no box. The five placement items are still New afterward.

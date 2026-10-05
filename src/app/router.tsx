@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 
 import { Landing } from '../features/landing/Landing.tsx';
+import { SessionRunner } from '../features/session/SessionRunner.tsx';
 import { Today } from '../features/today/Today.tsx';
 import { AppShell } from './AppShell.tsx';
 import { PlainLayout } from './PlainLayout.tsx';
@@ -22,8 +23,9 @@ export const router = createBrowserRouter([
       { path: '/', element: <Landing /> },
       {
         element: <PlainLayout />,
-        children: [placeholder('S02'), placeholder('S05'), placeholder('S09')],
+        children: [placeholder('S02'), placeholder('S09')],
       },
+      { path: '/session/:id', element: <SessionRunner /> },
       {
         element: <AppShell />,
         children: [

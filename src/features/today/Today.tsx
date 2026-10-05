@@ -1,5 +1,5 @@
 import { Settings } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { copy } from '../../app/copy.ts';
@@ -10,9 +10,11 @@ import { Button } from '../../components/Button.tsx';
 import { ReadinessBar } from '../../components/ReadinessBar.tsx';
 import { SectionLabel } from '../../components/SectionLabel.tsx';
 import { items, topicName } from '../../content/index.ts';
+import { startSession } from '../session/start.ts';
 import { weakestTopics } from '../../domain/readiness.ts';
 import { DAY_MS, dueWithin, nextReviewAt } from '../../domain/scheduler.ts';
 import { now } from '../../services/clock.ts';
+import { mark } from '../../services/perf.ts';
 
 const WEAKEST_TOPICS = 3;
 
@@ -23,8 +25,23 @@ export function Today() {
   const itemStates = useApp((state) => state.itemStates);
   const streak = useApp((state) => state.streak);
   const [moment] = useState(now);
+  const [nothingToAsk, setNothingToAsk] = useState(false);
+  const starting = useRef(false);
 
   if (profile === null) return null;
+
+  async function start() {
+    if (starting.current) return;
+    starting.current = true;
+    mark('shift-break-tap');
+    try {
+      const id = await startSession();
+      if (id === null) setNothingToAsk(true);
+      else navigate(`/session/${id}`);
+    } finally {
+      starting.current = false;
+    }
+  }
 
   const states = [...itemStates.values()];
   const dueNow = dueWithin(states, moment, 0);
@@ -68,7 +85,10 @@ export function Today() {
         <p className="mb-16 mt-4 text-16 text-ink-soft">
           {copy.today.shiftBreakMeta(profile.sessionLength, sessionMinutes(profile.sessionLength))}
         </p>
-        <Button onClick={() => navigate('/session/new')}>{copy.today.startSession}</Button>
+        <Button onClick={() => void start()}>{copy.today.startSession}</Button>
+        {nothingToAsk && (
+          <p className="mt-12 text-14 text-ink-soft">{copy.today.nothingToPractice}</p>
+        )}
       </section>
 
       <section className="flex flex-col gap-8 border-t border-line pt-12 desktop:col-start-2 desktop:row-start-2">

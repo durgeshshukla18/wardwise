@@ -201,6 +201,8 @@ Export file: one JSON object `{format: "wardwise-export", schemaVersion, exporte
 
 Keys and indexes: `id` values are string UUIDs. `profile` and `streak` hold one row each, with the fixed key `"me"`. `days.sessions` is a count. Indexes: `itemState.dueAt`, and `attempts.sessionId`, `attempts.itemId`, `attempts.ts`. IndexedDB cannot index booleans, so if `inMistakeBank` ever needs an index it is stored as 0 or 1.
 
+A session is saved as it happens. Starting one saves a `sessions` row and adds 1 to today's `days.sessions`. Each completed exercise writes its `attempts` row, the item's `itemState` (not for a same-session retry, which changes nothing), today's `days` row and the `streak` row in one transaction, so a crash loses at most the exercise in progress. Ending a session sets `endedAt` and `completed`.
+
 Store the schema version in Dexie and write a migration for every change. The export file includes the schema version and import rejects files with a newer version.
 
 ### Domain function contracts

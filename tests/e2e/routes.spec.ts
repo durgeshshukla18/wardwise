@@ -75,6 +75,18 @@ test.describe('with the demo profile', () => {
   for (const screen of screenRoutes.filter((entry) => !['S01', 'S02'].includes(entry.id))) {
     const url = screen.path.replace(':id', 'test-id');
 
+    // A live session only exists in memory, so a visit with no session goes to Today.
+    if (screen.id === 'S05') {
+      test('S05 /session/test-id goes to /today when there is no live session', async ({
+        page,
+      }) => {
+        await tryDemo(page);
+        await page.goto(url);
+        await expect(page).toHaveURL('/today');
+      });
+      continue;
+    }
+
     test(`${screen.id} ${url} renders without console errors`, async ({ page }) => {
       const errors = collectErrors(page);
       await tryDemo(page);

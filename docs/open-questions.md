@@ -85,3 +85,12 @@ The owner approved P3-9 to P3-22 with additions: the progress bar never moves ba
 | P3-20 | Export file shape is not defined. | `{format: "wardwise-export", schemaVersion, exportedAt, tables: {...all 10 tables}}`, written into 04-TRD.md. Import (Phase 5) rejects a newer version | Answered |
 | P3-21 | A2 unlock has no effect without S04. | Phase 3 uses the manual level switch only. `a2Unlocked` stays unused until Phase 5 | Answered |
 | P3-22 | Test tooling: no jsdom or component test library is approved. | UI is covered by Playwright and by pure-logic tests, plus a static guard test for colour literals and inline styles. The dev-only Draft label is checked once on the dev server | Answered |
+
+## Raised during the Phase 3 session build
+
+| # | Question | Proposed default | Status |
+| --- | --- | --- | --- |
+| P3-23 | Number dictation (E9) is rare in a normal session. Only number items in box 3 get it (or in box 4 and 5 as a fallback), and there are 3 number items. | Accept for the prototype. More number items in the content would make it common | Open |
+| P3-24 | When Start session finds nothing to ask, Today shows "Nothing to practise right now. Come back after your next review." | Keep. It only happens when every item is known and none is due | Open |
+| P3-25 | A same-session retry saves an attempt row but not an item state, and logs `exercise_result`. | Keep | Open |
+| P3-26 | The "no German voice" note shows on Learn cards only, where the missing audio buttons would be. | Keep. Revisit with the failure cases in Phase 4 | Open |

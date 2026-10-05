@@ -160,7 +160,7 @@ flowchart TD
 | S04 | Practice | Choose what to practise | Level switch (A1, A2), topic list with readiness bars, entries for Scenarios, Number dictation, Body Map, Confusable pairs |
 | S05 | Session runner | Do the exercises | One exercise at a time, progress "4 of 10", exit button. Navigation hidden for focus |
 | S06 | Feedback panel | Teach from every answer | Right or wrong, correct answer, one sentence why, error type, Next button. Bottom sheet on mobile, inline panel on desktop |
-| S07 | Session summary | Close the loop | Items right, items to revisit, next review time, buttons: Back to Today, Extra round |
+| S07 | Session summary | Close the loop | Items right, items to revisit, next review time (or how many items are still due now), buttons: Back to Today and Extra round. Never a "you are finished" message. The Extra round button is left out when there is nothing to ask |
 | S08 | Mistake Bank | Fix patterns | Weak items grouped by error type with counts, "Drill this group" button, items recovered this week |
 | S09 | Scenario runner | Practise real conversations | Patient line (text and audio), reply area for speech or typing, turn counter, debrief at the end |
 | S10 | Progress | Show real improvement | Ward Readiness per topic, counts of New, Learning and Strong items, 28 day streak calendar |

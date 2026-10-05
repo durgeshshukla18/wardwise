@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router';
 
 import { copy } from './copy.ts';
+import { tts } from '../services/tts.ts';
 import { guardRedirect } from './guards.ts';
 import { useApp } from './store.ts';
 
@@ -13,6 +14,8 @@ export function Root() {
 
   useEffect(() => {
     void useApp.getState().load();
+    // Look for a German voice now, so starting a session never waits for it.
+    void tts.ready();
   }, []);
 
   if (status === 'loading') return <div className="min-h-dvh bg-paper" />;

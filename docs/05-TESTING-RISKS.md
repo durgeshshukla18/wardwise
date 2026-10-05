@@ -47,6 +47,15 @@ Checker cases:
 | 120/80 (E9) | "120 80" | Correct |
 | Any E2 to E5 | Any text | Never calls the AI |
 
+### End to end checks (Playwright, Chromium, 390 px and 1280 px)
+
+- A full demo session from Try demo to the summary, with the network blocked after the first load, by pointer and by keyboard alone. Today then shows the new streak and a lower due count. There is no service worker until Phase 5, so these navigate inside the app and do not reload while offline.
+- Leaving after 3 answers keeps 3 attempts, and the session is saved as not completed.
+- The leave sheet opens from the Leave button and from the browser Back button.
+- A refresh in a session goes back to Today.
+- Audio plays the right text at the right speed, and with no German voice E4 and E9 do not appear.
+- The time from tapping Shift Break to the first exercise is under 500 ms, also with a 4x CPU slowdown.
+
 ### Developer tools
 
 Hidden behind `?dev=1`, absent from production builds shown to testers: advance the clock by one day, reset the AI daily count, force the AI to fail, force speech to be unsupported. Testing the next-day loop without waiting a day depends on these.

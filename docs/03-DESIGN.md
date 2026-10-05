@@ -78,7 +78,9 @@ German nouns are always written with the article in its article colour and the n
 | Mic button | 64 px circle, line microphone icon. States: ready, listening (three small level bars), processing. A "Type instead" text button sits under it |
 | Progress bar | 4 px, teal fill on line track. Session progress also shown as text "4 of 10" |
 | Readiness bar | 8 px, segmented in 10 parts, teal fill. Always paired with the percent as text |
-| Feedback panel | Bottom sheet on mobile, inline panel on desktop. Status line, correct answer, one sentence of why, error type chip, Next button |
+| Feedback panel | Bottom sheet on mobile, inline panel on desktop. Status line, correct answer, one sentence of why, error type chip, Next button. The sheet slides up in 200 ms and sticks to the bottom of the screen, so the options stay visible above it. Focus moves to Next. A same-session retry also shows "Fixed for now" or "Still tricky". For a meaning question the explanation already gives the answer, so the answer is not said twice |
+| Leave sheet | The same bottom sheet style: "Leave this session? Your answers so far are saved." with Keep going (the primary button) and Leave. Escape keeps going. The browser Back button opens it too |
+| Option key hint | On a desktop (1024 px and up) each option shows the key that chooses it, 1 to 4 (1 to 3 for the article pick) |
 | Error type chip | 4 px radius, 1 px line border, ink-soft text, for example "Article" |
 | Streak calendar | 28 small squares in a 7 column grid. Filled teal for practised days, outlined for missed, hatched for a day saved by a freeze |
 | Tab bar | 56 px high, four tabs with icon and label. Active tab uses teal text and a 2 px top rule |

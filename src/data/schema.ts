@@ -1,5 +1,8 @@
 // Data model from section 9 (docs/04-TRD.md). Pure: no Dexie, no browser APIs.
 import type { ErrorType, Level } from '../content/schema.ts';
+import type { ExerciseId, ItemState, LocalDate, StreakState } from '../domain/types.ts';
+
+export type { ExerciseId, LocalDate };
 
 export const SCHEMA_VERSION = 1;
 
@@ -19,11 +22,6 @@ export const STORES = {
 
 export const SINGLETON_KEY = 'me';
 
-/** Local calendar date, `YYYY-MM-DD`. */
-export type LocalDate = string;
-
-export type ExerciseId = 'E1' | 'E2' | 'E3' | 'E4' | 'E5' | 'E6' | 'E7' | 'E8' | 'E9' | 'E10';
-
 export type ProfileRow = {
   id: typeof SINGLETON_KEY;
   name: string;
@@ -36,20 +34,7 @@ export type ProfileRow = {
   onboarding: { goal: string; dailyTime: string; selfLevel: string } | null;
 };
 
-export type ItemStateRow = {
-  itemId: string;
-  box: 1 | 2 | 3 | 4 | 5;
-  dueAt: number;
-  state: 'new' | 'learning' | 'strong';
-  correct: number;
-  wrong: number;
-  lastSeenAt: number | null;
-  everProduced: boolean;
-  inMistakeBank: boolean;
-  bankEnteredAt: number | null;
-  bankCorrectDays: LocalDate[];
-  bankErrorType?: ErrorType;
-};
+export type ItemStateRow = ItemState;
 
 export type AttemptRow = {
   id: string;
@@ -82,14 +67,7 @@ export type DayRow = {
   sessions: number;
 };
 
-export type StreakRow = {
-  id: typeof SINGLETON_KEY;
-  current: number;
-  best: number;
-  freezes: number;
-  lastCountedDate: LocalDate | null;
-  freezeDays: LocalDate[];
-};
+export type StreakRow = StreakState & { id: typeof SINGLETON_KEY };
 
 export type AiCacheRow = {
   key: string;

@@ -38,5 +38,51 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // The engine is pure: no storage, services, UI or browser, and no hidden clock or randomness.
+    files: ['src/domain/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '**/data',
+                '**/data/**',
+                '**/services',
+                '**/services/**',
+                '**/app/**',
+                '**/components/**',
+                '**/features/**',
+                'react',
+                'react/*',
+                'react-dom',
+                'react-dom/*',
+                'react-router',
+                'react-router/*',
+                'dexie',
+              ],
+              message: 'src/domain must stay pure. Pass data in as arguments.',
+            },
+          ],
+        },
+      ],
+      'no-restricted-globals': [
+        'error',
+        ...[...new Set([...Object.keys(globals.browser), ...Object.keys(globals.node), 'Date'])].map(
+          (name) => ({
+            name,
+            message: 'src/domain must stay pure. Pass time and other inputs in as arguments.',
+          }),
+        ),
+      ],
+      'no-restricted-properties': [
+        'error',
+        { object: 'Math', property: 'random', message: 'Take an rng argument instead.' },
+        { object: 'Date', property: 'now', message: 'Take a now argument instead.' },
+      ],
+    },
+  },
   prettier,
 );

@@ -7,5 +7,12 @@ export default defineConfig({
   test: {
     include: ['tests/**/*.test.ts'],
     environment: 'node',
+    coverage: {
+      provider: 'v8',
+      include: ['src/domain/**/*.ts'],
+      exclude: ['src/domain/types.ts'],
+      reporter: ['text'],
+      thresholds: { lines: 95 },
+    },
   },
 });

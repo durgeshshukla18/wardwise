@@ -12,7 +12,9 @@
     "exampleDe": "Mein Kopf tut weh.",
     "exampleEn": "My head hurts.",
     "accepted": ["der Kopf", "Kopf"],
-    "mistakeNotes": { "article": "Kopf is masculine: der Kopf." },
+    "mistakeNotes": {
+      "article": "Kopf is masculine: der Kopf."
+    },
     "reviewed": null
   },
   {
@@ -27,7 +29,9 @@
     "exampleDe": "Sie haben Fieber.",
     "exampleEn": "You have a fever.",
     "accepted": ["das Fieber", "Fieber"],
-    "mistakeNotes": { "spelling": "Fieber has an e after the i: F-i-e-b-e-r." },
+    "mistakeNotes": {
+      "spelling": "Fieber has an e after the i: F-i-e-b-e-r."
+    },
     "reviewed": null
   },
   {
@@ -55,7 +59,9 @@
     "exampleDe": "Seit wann haben Sie die Schmerzen?",
     "exampleEn": "Since when have you had the pain?",
     "accepted": ["Seit wann haben Sie die Schmerzen?", "Seit wann haben Sie Schmerzen?"],
-    "mistakeNotes": { "word_order": "In a question the verb comes second: haben Sie." },
+    "mistakeNotes": {
+      "word_order": "In a question the verb comes second: haben Sie."
+    },
     "reviewed": null
   },
   {
@@ -85,7 +91,9 @@
     "exampleDe": "Mein Bauch tut weh.",
     "exampleEn": "My stomach hurts.",
     "accepted": ["der Bauch", "Bauch"],
-    "mistakeNotes": { "article": "Bauch is masculine: der Bauch." },
+    "mistakeNotes": {
+      "article": "Bauch is masculine: der Bauch."
+    },
     "reviewed": null
   },
   {
@@ -101,7 +109,9 @@
     "exampleDe": "Meine Hand tut weh.",
     "exampleEn": "My hand hurts.",
     "accepted": ["die Hand", "Hand"],
-    "mistakeNotes": { "article": "Hand is feminine: die Hand." },
+    "mistakeNotes": {
+      "article": "Hand is feminine: die Hand."
+    },
     "reviewed": null
   },
   {
@@ -117,7 +127,9 @@
     "exampleDe": "Mein Arm tut weh.",
     "exampleEn": "My arm hurts.",
     "accepted": ["der Arm", "Arm"],
-    "mistakeNotes": { "article": "Arm is masculine: der Arm." },
+    "mistakeNotes": {
+      "article": "Arm is masculine: der Arm."
+    },
     "reviewed": null
   },
   {
@@ -133,7 +145,9 @@
     "exampleDe": "Mein Bein tut weh.",
     "exampleEn": "My leg hurts.",
     "accepted": ["das Bein", "Bein"],
-    "mistakeNotes": { "article": "Bein is neuter: das Bein." },
+    "mistakeNotes": {
+      "article": "Bein is neuter: das Bein."
+    },
     "reviewed": null
   },
   {
@@ -149,7 +163,9 @@
     "exampleDe": "Mein Rücken tut weh.",
     "exampleEn": "My back hurts.",
     "accepted": ["der Rücken", "Rücken", "der Ruecken", "Ruecken"],
-    "mistakeNotes": { "article": "Rücken is masculine: der Rücken." },
+    "mistakeNotes": {
+      "article": "Rücken is masculine: der Rücken."
+    },
     "reviewed": null
   },
   {
@@ -165,7 +181,9 @@
     "exampleDe": "Mein Herz tut weh.",
     "exampleEn": "My heart hurts.",
     "accepted": ["das Herz", "Herz"],
-    "mistakeNotes": { "article": "Herz is neuter: das Herz." },
+    "mistakeNotes": {
+      "article": "Herz is neuter: das Herz."
+    },
     "reviewed": null
   },
   {
@@ -198,7 +216,9 @@
     "exampleDe": "Haben Sie Husten?",
     "exampleEn": "Do you have a cough?",
     "accepted": ["der Husten", "Husten"],
-    "mistakeNotes": { "article": "Husten is masculine: der Husten." },
+    "mistakeNotes": {
+      "article": "Husten is masculine: der Husten."
+    },
     "reviewed": null
   },
   {
@@ -213,7 +233,9 @@
     "exampleDe": "Haben Sie Schwindel?",
     "exampleEn": "Do you feel dizzy?",
     "accepted": ["der Schwindel", "Schwindel"],
-    "mistakeNotes": { "article": "Schwindel is masculine: der Schwindel." },
+    "mistakeNotes": {
+      "article": "Schwindel is masculine: der Schwindel."
+    },
     "reviewed": null
   },
   {
@@ -242,7 +264,9 @@
     "exampleDe": "Ich messe Ihre Temperatur.",
     "exampleEn": "I am measuring your temperature.",
     "accepted": ["die Temperatur", "Temperatur"],
-    "mistakeNotes": { "article": "Temperatur is feminine: die Temperatur." },
+    "mistakeNotes": {
+      "article": "Temperatur is feminine: die Temperatur."
+    },
     "reviewed": null
   },
   {
@@ -257,7 +281,9 @@
     "exampleDe": "Ich messe Ihren Puls.",
     "exampleEn": "I am measuring your pulse.",
     "accepted": ["der Puls", "Puls"],
-    "mistakeNotes": { "article": "Puls is masculine: der Puls." },
+    "mistakeNotes": {
+      "article": "Puls is masculine: der Puls."
+    },
     "reviewed": null
   },
   {
@@ -287,7 +313,9 @@
     "exampleDe": "Nehmen Sie die Tablette nach dem Essen.",
     "exampleEn": "Take the tablet after eating.",
     "accepted": ["die Tablette", "Tablette"],
-    "mistakeNotes": { "article": "Tablette is feminine: die Tablette." },
+    "mistakeNotes": {
+      "article": "Tablette is feminine: die Tablette."
+    },
     "reviewed": null
   },
   {
@@ -303,7 +331,475 @@
     "exampleDe": "Bleiben Sie bitte im Bett.",
     "exampleEn": "Please stay in bed.",
     "accepted": ["das Bett", "Bett"],
-    "mistakeNotes": { "article": "Bett is neuter: das Bett." },
+    "mistakeNotes": {
+      "article": "Bett is neuter: das Bett."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t01-hals",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T01",
+    "de": "Hals",
+    "article": "der",
+    "plural": "Hälse",
+    "en": "neck, throat",
+    "exampleDe": "Mein Hals tut weh.",
+    "exampleEn": "My throat hurts.",
+    "accepted": ["der Hals", "Hals"],
+    "mistakeNotes": {
+      "article": "Hals is masculine: der Hals."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t01-fuss",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T01",
+    "de": "Fuß",
+    "article": "der",
+    "plural": "Füße",
+    "en": "foot",
+    "exampleDe": "Mein Fuß tut weh.",
+    "exampleEn": "My foot hurts.",
+    "accepted": ["der Fuß", "Fuß", "der Fuss", "Fuss"],
+    "mistakeNotes": {
+      "article": "Fuß is masculine: der Fuß."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t01-auge",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T01",
+    "de": "Auge",
+    "article": "das",
+    "plural": "Augen",
+    "en": "eye",
+    "exampleDe": "Mein Auge tut weh.",
+    "exampleEn": "My eye hurts.",
+    "accepted": ["das Auge", "Auge"],
+    "mistakeNotes": {
+      "article": "Auge is neuter: das Auge."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t01-ohr",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T01",
+    "de": "Ohr",
+    "article": "das",
+    "plural": "Ohren",
+    "en": "ear",
+    "exampleDe": "Mein Ohr tut weh.",
+    "exampleEn": "My ear hurts.",
+    "accepted": ["das Ohr", "Ohr"],
+    "mistakeNotes": {
+      "article": "Ohr is neuter: das Ohr."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t02-uebelkeit",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T02",
+    "de": "Übelkeit",
+    "article": "die",
+    "en": "nausea",
+    "exampleDe": "Haben Sie Übelkeit?",
+    "exampleEn": "Do you feel nauseous?",
+    "accepted": ["die Übelkeit", "Übelkeit", "die Uebelkeit", "Uebelkeit"],
+    "mistakeNotes": {
+      "article": "Übelkeit is feminine: die Übelkeit."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t02-mir-ist-schlecht",
+    "kind": "phrase",
+    "pos": "other",
+    "level": "A1",
+    "topic": "T02",
+    "de": "Mir ist schlecht.",
+    "en": "I feel sick.",
+    "exampleDe": "Mir ist schlecht.",
+    "exampleEn": "I feel sick.",
+    "accepted": ["Mir ist schlecht.", "Mir ist schlecht"],
+    "reviewed": null
+  },
+  {
+    "id": "t02-muede",
+    "kind": "word",
+    "pos": "adjective",
+    "level": "A1",
+    "topic": "T02",
+    "de": "müde",
+    "en": "tired",
+    "exampleDe": "Sind Sie müde?",
+    "exampleEn": "Are you tired?",
+    "accepted": ["müde", "muede"],
+    "reviewed": null
+  },
+  {
+    "id": "t02-links",
+    "kind": "word",
+    "pos": "adverb",
+    "level": "A1",
+    "topic": "T02",
+    "de": "links",
+    "en": "left, on the left",
+    "exampleDe": "Der Schmerz ist links.",
+    "exampleEn": "The pain is on the left.",
+    "accepted": ["links"],
+    "confusableWith": ["t02-rechts"],
+    "reviewed": null
+  },
+  {
+    "id": "t02-rechts",
+    "kind": "word",
+    "pos": "adverb",
+    "level": "A1",
+    "topic": "T02",
+    "de": "rechts",
+    "en": "right, on the right",
+    "exampleDe": "Der Schmerz ist rechts.",
+    "exampleEn": "The pain is on the right.",
+    "accepted": ["rechts"],
+    "confusableWith": ["t02-links"],
+    "reviewed": null
+  },
+  {
+    "id": "t03-puls-1",
+    "kind": "phrase",
+    "pos": "other",
+    "level": "A1",
+    "topic": "T03",
+    "de": "zweiundsiebzig",
+    "spoken": "zweiundsiebzig",
+    "en": "72",
+    "exampleDe": "Ihr Puls ist zweiundsiebzig.",
+    "exampleEn": "Your pulse is 72.",
+    "accepted": ["72"],
+    "reviewed": null
+  },
+  {
+    "id": "t03-einatmen",
+    "kind": "sentence",
+    "pos": "other",
+    "level": "A2",
+    "topic": "T03",
+    "de": "Atmen Sie bitte tief ein.",
+    "en": "Please breathe in deeply.",
+    "exampleDe": "Atmen Sie bitte tief ein.",
+    "exampleEn": "Please breathe in deeply.",
+    "accepted": ["Atmen Sie bitte tief ein.", "Atmen Sie tief ein."],
+    "mistakeNotes": {
+      "grammar": "The verb einatmen splits: atmen goes second, ein goes to the end."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t04-patient",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T04",
+    "de": "Patient",
+    "article": "der",
+    "plural": "Patienten",
+    "en": "patient (male)",
+    "exampleDe": "Der Patient schläft.",
+    "exampleEn": "The patient is sleeping.",
+    "accepted": ["der Patient", "Patient"],
+    "mistakeNotes": {
+      "article": "Patient is masculine: der Patient."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t04-patientin",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T04",
+    "de": "Patientin",
+    "article": "die",
+    "plural": "Patientinnen",
+    "en": "patient (female)",
+    "exampleDe": "Die Patientin hat Fieber.",
+    "exampleEn": "The patient has a fever.",
+    "accepted": ["die Patientin", "Patientin"],
+    "mistakeNotes": {
+      "article": "Patientin is feminine: die Patientin."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t04-arzt",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T04",
+    "de": "Arzt",
+    "article": "der",
+    "plural": "Ärzte",
+    "en": "doctor (male)",
+    "exampleDe": "Der Arzt kommt gleich.",
+    "exampleEn": "The doctor is coming right away.",
+    "accepted": ["der Arzt", "Arzt"],
+    "mistakeNotes": {
+      "article": "Arzt is masculine: der Arzt."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t04-aerztin",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T04",
+    "de": "Ärztin",
+    "article": "die",
+    "plural": "Ärztinnen",
+    "en": "doctor (female)",
+    "exampleDe": "Die Ärztin kommt gleich.",
+    "exampleEn": "The doctor is coming right away.",
+    "accepted": ["die Ärztin", "Ärztin", "die Aerztin", "Aerztin"],
+    "mistakeNotes": {
+      "article": "Ärztin is feminine: die Ärztin."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t04-wie-heissen-sie",
+    "kind": "phrase",
+    "pos": "other",
+    "level": "A1",
+    "topic": "T04",
+    "de": "Wie heißen Sie?",
+    "en": "What is your name?",
+    "exampleDe": "Wie heißen Sie?",
+    "exampleEn": "What is your name?",
+    "accepted": ["Wie heißen Sie?", "Wie heissen Sie?", "Wie heißen Sie", "Wie heissen Sie"],
+    "reviewed": null
+  },
+  {
+    "id": "t05-krankenhaus",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T05",
+    "de": "Krankenhaus",
+    "article": "das",
+    "plural": "Krankenhäuser",
+    "en": "hospital",
+    "exampleDe": "Sie sind im Krankenhaus.",
+    "exampleEn": "You are in the hospital.",
+    "accepted": ["das Krankenhaus", "Krankenhaus"],
+    "mistakeNotes": {
+      "article": "Krankenhaus is neuter: das Krankenhaus."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t05-thermometer",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T05",
+    "de": "Thermometer",
+    "article": "das",
+    "plural": "Thermometer",
+    "en": "thermometer",
+    "exampleDe": "Hier ist das Thermometer.",
+    "exampleEn": "Here is the thermometer.",
+    "accepted": ["das Thermometer", "Thermometer"],
+    "mistakeNotes": {
+      "article": "Thermometer is neuter: das Thermometer."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t05-klingel",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T05",
+    "de": "Klingel",
+    "article": "die",
+    "plural": "Klingeln",
+    "en": "call bell",
+    "exampleDe": "Drücken Sie bitte die Klingel.",
+    "exampleEn": "Please press the call bell.",
+    "accepted": ["die Klingel", "Klingel"],
+    "mistakeNotes": {
+      "article": "Klingel is feminine: die Klingel."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t05-zimmer",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A1",
+    "topic": "T05",
+    "de": "Zimmer",
+    "article": "das",
+    "plural": "Zimmer",
+    "en": "room",
+    "exampleDe": "Das ist Ihr Zimmer.",
+    "exampleEn": "This is your room.",
+    "accepted": ["das Zimmer", "Zimmer"],
+    "mistakeNotes": {
+      "article": "Zimmer is neuter: das Zimmer."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t06-aufstehen",
+    "kind": "sentence",
+    "pos": "other",
+    "level": "A2",
+    "topic": "T06",
+    "de": "Stehen Sie bitte auf.",
+    "en": "Please get up.",
+    "exampleDe": "Stehen Sie bitte auf.",
+    "exampleEn": "Please get up.",
+    "accepted": ["Stehen Sie bitte auf.", "Stehen Sie auf."],
+    "mistakeNotes": {
+      "grammar": "The verb aufstehen splits: stehen goes first, auf goes to the end."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t06-waschen",
+    "kind": "sentence",
+    "pos": "other",
+    "level": "A2",
+    "topic": "T06",
+    "de": "Ich helfe Ihnen beim Waschen.",
+    "en": "I will help you wash.",
+    "exampleDe": "Ich helfe Ihnen beim Waschen.",
+    "exampleEn": "I will help you wash.",
+    "accepted": ["Ich helfe Ihnen beim Waschen."],
+    "reviewed": null
+  },
+  {
+    "id": "t06-trinken",
+    "kind": "sentence",
+    "pos": "other",
+    "level": "A2",
+    "topic": "T06",
+    "de": "Möchten Sie etwas trinken?",
+    "en": "Would you like something to drink?",
+    "exampleDe": "Möchten Sie etwas trinken?",
+    "exampleEn": "Would you like something to drink?",
+    "accepted": ["Möchten Sie etwas trinken?", "Moechten Sie etwas trinken?"],
+    "reviewed": null
+  },
+  {
+    "id": "t06-im-bett-bleiben",
+    "kind": "sentence",
+    "pos": "other",
+    "level": "A2",
+    "topic": "T06",
+    "de": "Sie müssen im Bett bleiben.",
+    "en": "You have to stay in bed.",
+    "exampleDe": "Sie müssen im Bett bleiben.",
+    "exampleEn": "You have to stay in bed.",
+    "accepted": ["Sie müssen im Bett bleiben.", "Sie muessen im Bett bleiben."],
+    "mistakeNotes": {
+      "word_order": "With müssen, the second verb goes to the end: bleiben."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t07-medikament",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A2",
+    "topic": "T07",
+    "de": "Medikament",
+    "article": "das",
+    "plural": "Medikamente",
+    "en": "medication",
+    "exampleDe": "Nehmen Sie Medikamente?",
+    "exampleEn": "Do you take medication?",
+    "accepted": ["das Medikament", "Medikament"],
+    "mistakeNotes": {
+      "article": "Medikament is neuter: das Medikament."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t07-spritze",
+    "kind": "word",
+    "pos": "noun",
+    "level": "A2",
+    "topic": "T07",
+    "de": "Spritze",
+    "article": "die",
+    "plural": "Spritzen",
+    "en": "injection, syringe",
+    "exampleDe": "Ich gebe Ihnen eine Spritze.",
+    "exampleEn": "I am giving you an injection.",
+    "accepted": ["die Spritze", "Spritze"],
+    "mistakeNotes": {
+      "article": "Spritze is feminine: die Spritze."
+    },
+    "reviewed": null
+  },
+  {
+    "id": "t07-dreimal-taeglich",
+    "kind": "phrase",
+    "pos": "other",
+    "level": "A2",
+    "topic": "T07",
+    "de": "dreimal täglich",
+    "en": "three times a day",
+    "exampleDe": "Nehmen Sie die Tablette dreimal täglich.",
+    "exampleEn": "Take the tablet three times a day.",
+    "accepted": ["dreimal täglich", "dreimal taeglich"],
+    "reviewed": null
+  },
+  {
+    "id": "t08-allergien",
+    "kind": "sentence",
+    "pos": "other",
+    "level": "A2",
+    "topic": "T08",
+    "de": "Haben Sie Allergien?",
+    "en": "Do you have allergies?",
+    "exampleDe": "Haben Sie Allergien?",
+    "exampleEn": "Do you have allergies?",
+    "accepted": ["Haben Sie Allergien?", "Haben Sie Allergien"],
+    "reviewed": null
+  },
+  {
+    "id": "t08-wie-stark",
+    "kind": "sentence",
+    "pos": "other",
+    "level": "A2",
+    "topic": "T08",
+    "de": "Wie stark sind die Schmerzen?",
+    "en": "How strong is the pain?",
+    "exampleDe": "Wie stark sind die Schmerzen?",
+    "exampleEn": "How strong is the pain?",
+    "accepted": ["Wie stark sind die Schmerzen?", "Wie stark sind die Schmerzen"],
+    "mistakeNotes": {
+      "word_order": "In a question the verb comes second: sind."
+    },
     "reviewed": null
   }
 ]

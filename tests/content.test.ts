@@ -15,20 +15,20 @@ function itemById(id: string): Record<string, unknown> {
 }
 
 describe('shipped content', () => {
-  it('has 20 items that pass every check in development mode', () => {
-    expect(items).toHaveLength(20);
+  it('has 49 items that pass every check in development mode', () => {
+    expect(items).toHaveLength(49);
     const result = validateItems(items, dev);
     expect(result.errors).toEqual([]);
   });
 
   it('reports every draft as a warning in development mode', () => {
     const result = validateItems(items, dev);
-    expect(result.warnings).toHaveLength(20);
+    expect(result.warnings).toHaveLength(49);
   });
 
   it('fails in release mode while items are drafts', () => {
     const result = validateItems(items, release);
-    expect(result.errors).toHaveLength(20);
+    expect(result.errors).toHaveLength(49);
   });
 
   it('has no Hindi hints yet', () => {

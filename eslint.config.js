@@ -70,12 +70,12 @@ export default tseslint.config(
       ],
       'no-restricted-globals': [
         'error',
-        ...[...new Set([...Object.keys(globals.browser), ...Object.keys(globals.node), 'Date'])].map(
-          (name) => ({
-            name,
-            message: 'src/domain must stay pure. Pass time and other inputs in as arguments.',
-          }),
-        ),
+        ...[
+          ...new Set([...Object.keys(globals.browser), ...Object.keys(globals.node), 'Date']),
+        ].map((name) => ({
+          name,
+          message: 'src/domain must stay pure. Pass time and other inputs in as arguments.',
+        })),
       ],
       'no-restricted-properties': [
         'error',

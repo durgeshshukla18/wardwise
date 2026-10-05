@@ -19,3 +19,11 @@ Questions raised by the coding agent, with the owner's answer.
 | P1-11 | How to prove the 390 px and 1280 px route checks. | Playwright, Chromium only, one smoke test per route, fail on any console error | Answered |
 | P1-12 | Unknown URLs and the onboarding redirect. | Unknown URLs go to `/`. Onboarding redirect waits until Phase 3 | Answered |
 | P1-13 | Format of `confusables.json`. | Wait until F-21 | Answered |
+
+## Raised during Phase 1, needed later
+
+| # | Question | Proposed default | Status |
+| --- | --- | --- | --- |
+| P3-1 | The demo seed (F-01) needs about 40 items across boxes 1 to 5, but 20 items exist. Will more items arrive before Phase 3? | Owner supplies at least 20 more items before the seed script is written | Open |
+| P3-2 | The demo seed lists "Seit wann haben Sie Schmerzen?" as a Mistake Bank item, but `t08-seit-wann` has `de` "Seit wann haben Sie die Schmerzen?" (the seed text is one of its accepted variants). Is the seed item `t08-seit-wann`? | Yes, seed `t08-seit-wann` | Open |
+| P3-3 | `sessions.mode` has no list of allowed values. | `shift_break`, `practice`, `drill`, `extra_round`, `daily_case` | Open |

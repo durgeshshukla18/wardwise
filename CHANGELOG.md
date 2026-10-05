@@ -2,6 +2,23 @@
 
 Each phase from section 11 (`docs/00-README.md`) adds an entry: what was built and what was learned.
 
+## Phase 2: Engine (2026-10-05)
+
+### Built
+
+- Pure functions in `src/domain` for the scheduler (Leitner boxes, Mistake Bank, same-session retry), the checker (rules first, `needsAI` decision, feedback sentences), the composer (session order, exercise choice, speaking minimum), readiness (with placement and the A2 unlock) and streak (freezes, walking missed days).
+- Small helpers: calendar date maths without `Date`, a seeded random generator, text normalisation and edit distance, and a table of which exercise types fit which item.
+- An ESLint rule that stops `src/domain` importing data, services, React or Dexie, and using browser globals, `Date` or `Math.random`. A test runs ESLint on throwaway code to prove it fires.
+- `src/data/schema.ts` now takes its row types from `src/domain/types.ts`.
+- 168 new tests in `tests/domain`: the 18 scheduler, composer and streak cases and the 7 checker cases from `docs/05-TESTING-RISKS.md`, each as its own named test, plus a test for every rule in section 3. Line coverage of `src/domain` is 100 percent (gate: 95).
+
+### Learned
+
+- Section 3 had gaps that only show up when the rules become functions: how a new item fits in a 10 slot session, how a learner with low boxes can reach the speaking minimum, what "after entering" means for the Mistake Bank, and whether a Production answer can still recover an item after a recognition answer on the second day. Each is now written into `docs/02` and `docs/04`.
+- Docs contradicted each other: section 6 said E1 to E7 never call the AI, while the AI table lists E7 sentences. Fixed.
+- Passing `now`, `day` and `rng` in made every test deterministic, and let one test run the composer with 25 seeds to check the speaking minimum.
+- A Phase 3 gap is logged: an Extra round can be empty (P3-4).
+
 ## Phase 1: Foundation (2026-10-05)
 
 ### Built

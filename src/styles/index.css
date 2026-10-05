@@ -126,3 +126,26 @@
     padding-bottom: calc(var(--spacing-tabbar) + env(safe-area-inset-bottom));
   }
 }
+
+/* Section 7: bottom sheets slide up in 200 ms. Reduced motion makes it instant (see base). */
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@layer components {
+  .sheet-in {
+    animation: sheet-in 200ms ease-out;
+  }
+
+  /* On a desktop the feedback panel sits inline under the options, with no slide. */
+  @media (min-width: 1024px) {
+    .sheet-in {
+      animation: none;
+    }
+  }
+}

@@ -134,7 +134,7 @@ The app never shows a "you are finished" screen. When today's session is done it
 
 ### Placement
 
-Onboarding shows 5 A1 items as E3 questions. 0 to 2 correct places the learner at A1. 3 to 5 correct asks "You seem ready to start at A2. Start there?" and she chooses. Placement only decides where new items come from. It never locks anything. Placement answers are checked with the checker and scored with `placementLevel`. Placement never calls the scheduler, so it creates no item state and changes no box. The five placement items are still New afterward.
+Onboarding shows 5 A1 items as E3 questions. The five are the first A1 word with an article, in id order, from each of T01 to T05, and their option sets use a fixed random seed, so the questions are identical on every run. 0 to 2 correct places the learner at A1. 3 to 5 correct asks "You seem ready to start at A2. Start there?" and she chooses. Placement only decides where new items come from. It never locks anything. Placement answers are checked with the checker and scored with `placementLevel`. Placement never calls the scheduler, so it creates no item state and changes no box. The five placement items are still New afterward.
 
 ### Retention loop
 

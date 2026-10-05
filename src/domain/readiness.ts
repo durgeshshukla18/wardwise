@@ -38,3 +38,36 @@ export function placementLevel(correct: number): 'A1' | 'offer_A2' {
   }
   return correct >= 3 ? 'offer_A2' : 'A1';
 }
+
+/** The topics with the lowest readiness. Only topics that have items. Ties break by topic code. */
+export function weakestTopics(
+  items: readonly Item[],
+  states: ReadonlyMap<string, ItemState>,
+  count = 3,
+): { topic: Item['topic']; percent: number }[] {
+  const topics = [...new Set(items.map((item) => item.topic))].sort();
+  return topics
+    .map((topic) => ({ topic, percent: computeReadiness(topic, items, states) }))
+    .sort((a, b) => a.percent - b.percent || (a.topic < b.topic ? -1 : 1))
+    .slice(0, count);
+}
+
+const PLACEMENT_TOPICS: readonly Item['topic'][] = ['T01', 'T02', 'T03', 'T04', 'T05'];
+
+/**
+ * The 5 placement questions: from each of T01 to T05, the first A1 word with an article, in id
+ * order. The same items every time.
+ */
+export function placementItems(items: readonly Item[]): Item[] {
+  const byId = [...items].sort((a, b) => (a.id < b.id ? -1 : 1));
+  return PLACEMENT_TOPICS.flatMap((topic) => {
+    const found = byId.find(
+      (item) =>
+        item.topic === topic &&
+        item.level === 'A1' &&
+        item.kind === 'word' &&
+        item.article !== undefined,
+    );
+    return found ? [found] : [];
+  });
+}

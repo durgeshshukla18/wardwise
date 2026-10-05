@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { a2Unlocked, computeReadiness, placementLevel } from '../../src/domain/readiness.ts';
+import {
+  a2Unlocked,
+  computeReadiness,
+  placementItems,
+  placementLevel,
+  weakestTopics,
+} from '../../src/domain/readiness.ts';
 import { ITEMS, item, state, stateMap } from './fixtures.ts';
 
 const topicItems = (topic: string) => ITEMS.filter((entry) => entry.topic === topic);
@@ -97,5 +103,82 @@ describe('placement', () => {
   it('rejects scores that are not a whole number from 0 to 5', () => {
     for (const bad of [-1, 6, 2.5, Number.NaN])
       expect(() => placementLevel(bad)).toThrow(RangeError);
+  });
+});
+
+describe('weakestTopics', () => {
+  const strongIn = (topic: string, n: number) =>
+    ITEMS.filter((entry) => entry.topic === topic)
+      .slice(0, n)
+      .map((entry) => state(entry.id, { box: 5, state: 'strong' }));
+
+  it('returns the 3 lowest topics, lowest first, and breaks ties by topic code', () => {
+    expect(weakestTopics(ITEMS, stateMap())).toEqual([
+      { topic: 'T01', percent: 0 },
+      { topic: 'T02', percent: 0 },
+      { topic: 'T03', percent: 0 },
+    ]);
+  });
+
+  it('ranks by readiness, so a topic that is already strong drops out', () => {
+    const all = (topic: string) => strongIn(topic, 99);
+    const states = stateMap(...all('T01'), ...all('T02'), ...strongIn('T04', 1));
+    const result = weakestTopics(ITEMS, states);
+    expect(result.map((entry) => entry.topic)).toEqual(['T03', 'T05', 'T06']);
+    expect(result.every((entry) => entry.percent === 0)).toBe(true);
+  });
+
+  it('sorts by percent before topic code', () => {
+    const states = stateMap(...strongIn('T01', 1), ...strongIn('T03', 1));
+    const result = weakestTopics(ITEMS, states, 8);
+    expect(result.map((entry) => entry.percent)).toEqual(
+      [...result.map((entry) => entry.percent)].sort((a, b) => a - b),
+    );
+    expect(
+      result
+        .slice(-2)
+        .map((entry) => entry.topic)
+        .sort(),
+    ).toEqual(['T01', 'T03']);
+  });
+
+  it('counts only topics that have at least one item', () => {
+    const subset = ITEMS.filter((entry) => entry.topic === 'T01' || entry.topic === 'T05');
+    expect(weakestTopics(subset, stateMap()).map((entry) => entry.topic)).toEqual(['T01', 'T05']);
+    expect(weakestTopics([], stateMap())).toEqual([]);
+  });
+
+  it('honours a different count', () => {
+    expect(weakestTopics(ITEMS, stateMap(), 1)).toHaveLength(1);
+    expect(weakestTopics(ITEMS, stateMap(), 20)).toHaveLength(8);
+  });
+});
+
+describe('placementItems', () => {
+  it('takes the first A1 word with an article, in id order, from each of T01 to T05', () => {
+    expect(placementItems(ITEMS).map((entry) => entry.id)).toEqual([
+      't01-arm',
+      't02-fieber',
+      't03-puls',
+      't04-aerztin',
+      't05-bett',
+    ]);
+  });
+
+  it('is the same whatever order the items arrive in', () => {
+    const reversed = [...ITEMS].reverse();
+    expect(placementItems(reversed)).toEqual(placementItems(ITEMS));
+  });
+
+  it('skips A2 items, phrases, and words with no article', () => {
+    for (const entry of placementItems(ITEMS)) {
+      expect(entry).toMatchObject({ level: 'A1', kind: 'word' });
+      expect(entry.article).toBeDefined();
+    }
+  });
+
+  it('returns fewer than 5 when a topic has no suitable item', () => {
+    const without = ITEMS.filter((entry) => entry.topic !== 'T03');
+    expect(placementItems(without)).toHaveLength(4);
   });
 });

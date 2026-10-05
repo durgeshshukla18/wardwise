@@ -88,12 +88,15 @@ A session has 10 exercises by default (Settings can switch to 5 or 15). Fill in 
 2. Other due items, most overdue first: up to 5
 3. New items: up to 2, and only if fewer than 12 items are waiting as due. No more than 6 new items per calendar day
 4. If still short, fill with Learning items (boxes 1 to 3) not seen today, then random Strong items
+5. If slots still remain and fewer than 12 items are waiting as due, add more new items, up to the daily cap of 6. This tier only fires when nothing else fills the session, so a learner with enough to review still sees at most 2 new items. Without it, a brand new learner would get 2 new items and 2 quizzes, which is less than the 5 exercises that make a streak day
 
 Exercise choice by box: a New item gets E1, then E3 or E4 once more later in the same session. Box 1 reviews use E3 or E4. Box 2 uses E2, E5 or E4. Box 3 uses E6 or E9. Box 4 and 5 use E7, E8 or E10. When speech recognition is supported and switched on, at least 3 of the 10 exercises must be E7, E8 or E10. When it is not, that quota does not apply and E6 replaces E7 only. E8 is tap based and E10 can be typed, so both stay available.
 
 How the composer applies this:
 
-- The caps (4, 5 and 2) stay the same for sessions of 5 and 15. Step 4 fills whatever room is left.
+- The caps (4, 5 and 2) stay the same for sessions of 5 and 15. Step 4 fills whatever room is left, and step 5 adds new items if there is still room.
+- An Extra round (a Shift Break started after the day's session) skips the "not seen today" filter in step 4. It may include Learning items seen today, then Strong items. It still never adds new items beyond the daily cap of 6. It returns the smaller of the session length and the items available, and is empty only when there is nothing eligible at all.
+- The app tells the composer which exercise types it can run (`enabledExercises`, default all). A type that is not enabled falls back by the usual rules: E7, E8 and E10 become E6 for any item that can use it, then E9 or E3. In Phase 3 only E1 to E6 and E9 are enabled.
 - "Waiting as due" counts items that have had a Learn card and are due now, Mistake Bank items included. New items are not counted.
 - A New item is one planned exercise: its Learn card (E1), which is always the first exercise for that item. E1 is never used for an item that has had its Learn card. Its same-session quiz (E3 or E4, after 2 other exercises or at the end) is added on top and does not count toward the session length. Wrong-answer retries are added the same way.
 - New items come from the learner's level first, in content order, and from the other level only when that level has none left. The caller says how many new items were learned today.
@@ -130,7 +133,7 @@ Reasons to come back tomorrow, in order of weight:
 1. **Items due.** Today shows "7 items due in the next 24 hours" with the Shift Break button.
 2. **Ward Readiness.** Each topic shows its percent of Strong items. It rises with practice and falls when a Strong item goes back to box 1 after a wrong answer. There is no separate decay over time. It is rounded to a whole number, unseen items count as not strong, and a topic with no items shows 0.
 3. **Daily Case.** One short scenario a day (about 2 minutes), rotating through the scenario library.
-4. **Streak.** A day counts when she completes at least 5 exercises. She earns 1 streak freeze for every 7 day streak, holds a maximum of 2. Each freeze covers one missed day and is used automatically.
+4. **Streak.** A day counts when she completes at least 5 exercises. Every completed exercise counts, including Learn cards (E1), quizzes and retries. She earns 1 streak freeze for every 7 day streak, holds a maximum of 2. Each freeze covers one missed day and is used automatically.
 5. **Weekly recap.** On Monday: words fixed last week and new Strong words. No points, no leaderboard.
 
 Streak details: the engine walks the local dates after the last counted date. Each fully missed day uses one freeze, or resets the streak to 0 when none is left. Today is never counted as missed. When today reaches 5 exercises the streak goes up by 1, or restarts at 1 after a reset. A freeze is earned each time the streak reaches a multiple of 7, only on a counted day, up to 2 held. The last counted date means the last date counted or covered by a freeze, so running the update twice never spends a freeze twice. The dates a freeze covered are returned so they can be saved and shown hatched in the calendar.

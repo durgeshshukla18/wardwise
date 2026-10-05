@@ -131,24 +131,48 @@ describe('composer: new items', () => {
     }
   });
 
-  it('adds at most 2 new items, and fewer when today’s limit of 6 is close', () => {
-    expect(compose(fewDue).slots.filter((s) => s.exercise === 'E1')).toHaveLength(2);
-    expect(
-      compose(fewDue, { newItemsToday: 5 }).slots.filter((s) => s.exercise === 'E1'),
-    ).toHaveLength(1);
-    expect(
-      compose(fewDue, { newItemsToday: 4 }).slots.filter((s) => s.exercise === 'E1'),
-    ).toHaveLength(2);
+  const newCount = (slots: Slot[]) => slots.filter((slot) => slot.exercise === 'E1').length;
+
+  it('a learner with enough to review sees at most 2 new items', () => {
+    const states = PLAIN.slice(0, 15).map((entry, i) => (i < 6 ? due(entry, i) : state(entry.id)));
+    expect(newCount(compose(states).slots)).toBe(2);
+    expect(planned(compose(states).slots)).toHaveLength(10);
+  });
+
+  it('adds more new items only when nothing else fills the session, up to 6 a day', () => {
+    // 3 due items and nothing else: 2 new items from step 3, then up to 4 more from the last tier.
+    expect(newCount(compose(fewDue).slots)).toBe(6);
+    expect(newCount(compose(fewDue, { newItemsToday: 5 }).slots)).toBe(1);
+    expect(newCount(compose(fewDue, { newItemsToday: 4 }).slots)).toBe(2);
+    expect(newCount(compose(fewDue, { newItemsToday: 6 }).slots)).toBe(0);
+  });
+
+  it('(a) a brand new learner who finishes a Shift Break of 10 completes at least 5 exercises', () => {
+    const { slots } = compose([]);
+    expect(newCount(slots)).toBe(6);
+    expect(slots.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it('(b) a brand new learner with a session length of 5 completes at least 5 exercises', () => {
+    const { slots } = compose([], { settings: { sessionLength: 5 } });
+    expect(planned(slots)).toHaveLength(5);
+    expect(slots.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it('(c) a learner with 12 or more items due still gets no new items', () => {
+    const states = PLAIN.slice(0, 14).map((entry, i) => due(entry, i));
+    expect(newCount(compose(states).slots)).toBe(0);
+    expect(newCount(compose(states, { settings: { sessionLength: 15 } }).slots)).toBe(0);
   });
 
   it('takes new items from the learner’s level first, in content order', () => {
     const a1 = compose([], { settings: { level: 'A1' } }).slots.filter((s) => s.exercise === 'E1');
-    expect(a1.map((s) => item(s.itemId).level)).toEqual(['A1', 'A1']);
+    expect(a1.map((s) => item(s.itemId).level)).toEqual(Array(6).fill('A1'));
     const a2 = compose([], { settings: { level: 'A2' } }).slots.filter((s) => s.exercise === 'E1');
-    expect(a2.map((s) => item(s.itemId).level)).toEqual(['A2', 'A2']);
+    expect(a2.map((s) => item(s.itemId).level)).toEqual(Array(6).fill('A2'));
     expect(a1.map((s) => s.itemId).sort()).toEqual(
       ITEMS.filter((entry) => entry.level === 'A1')
-        .slice(0, 2)
+        .slice(0, 6)
         .map((entry) => entry.id)
         .sort(),
     );
@@ -465,5 +489,109 @@ describe('composer: scheduleRetry', () => {
     const original = queue('a', 'b', 'c', 'd');
     scheduleRetry(original, 0, { id: 'a' }, rng(), true);
     expect(original).toHaveLength(4);
+  });
+});
+
+describe('composer: Extra round', () => {
+  const seenToday = (entry: Item, box: 1 | 2 | 3 | 4 | 5 = 2) =>
+    state(entry.id, { box, dueAt: NOW + 3 * DAY_MS, lastSeenAt: NOW - 1000 });
+
+  it('may include Learning items seen today, which a normal session skips', () => {
+    const states = PLAIN.slice(0, 3).map((entry) => seenToday(entry));
+    const normal = compose(states, { newItemsToday: 6 });
+    const extra = compose(states, { newItemsToday: 6, extraRound: true });
+    expect(normal.slots).toEqual([]);
+    expect(ids(extra.slots).sort()).toEqual(states.map((s) => s.itemId).sort());
+  });
+
+  it('takes Learning items before Strong items, then fills with Strong', () => {
+    const learning = seenToday(item('t01-kopf'));
+    const strong = seenToday(item('t01-hand'), 5);
+    const { slots } = compose([learning, strong], {
+      newItemsToday: 6,
+      extraRound: true,
+      settings: { sessionLength: 5 },
+    });
+    expect(ids(slots).sort()).toEqual(['t01-hand', 't01-kopf']);
+  });
+
+  it('returns the smaller of the session length and the items available', () => {
+    const states = PLAIN.slice(0, 20).map((entry) => seenToday(entry));
+    const five = compose(states, {
+      newItemsToday: 6,
+      extraRound: true,
+      settings: { sessionLength: 5 },
+    });
+    expect(planned(five.slots)).toHaveLength(5);
+    expect(
+      planned(compose(states.slice(0, 4), { newItemsToday: 6, extraRound: true }).slots),
+    ).toHaveLength(4);
+  });
+
+  it('never adds new items beyond the daily cap of 6', () => {
+    const states = PLAIN.slice(0, 2).map((entry) => seenToday(entry));
+    expect(
+      compose(states, { newItemsToday: 5, extraRound: true }).slots.filter(
+        (s) => s.exercise === 'E1',
+      ),
+    ).toHaveLength(1);
+    expect(
+      compose(states, { newItemsToday: 6, extraRound: true }).slots.filter(
+        (s) => s.exercise === 'E1',
+      ),
+    ).toHaveLength(0);
+  });
+
+  it('is empty only when there is nothing eligible at all', () => {
+    expect(compose([], { newItemsToday: 6, extraRound: true }).slots).toEqual([]);
+    expect(compose([], { newItemsToday: 0, extraRound: true }).slots.length).toBeGreaterThan(0);
+  });
+});
+
+describe('composer: enabledExercises', () => {
+  const PHASE_3: ExerciseId[] = ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E9'];
+  const states = ITEMS.map((entry, i) => due(entry, i, ((i % 5) + 1) as 1 | 2 | 3 | 4 | 5));
+
+  it('never emits a type that is not enabled', () => {
+    for (let seed = 1; seed <= 10; seed++) {
+      const { slots } = compose(states, { enabledExercises: PHASE_3 }, seed);
+      for (const slot of slots) expect(PHASE_3).toContain(slot.exercise);
+    }
+  });
+
+  it('turns E7, E8 and E10 into E6 for items that can use it, and E9 or E3 for number items', () => {
+    const wordBox5 = due(item('t01-kopf'), 0, 5);
+    const sentenceBox5 = due(item('t08-seit-wann'), 1, 5);
+    const numberBox5 = due(item('t03-bp-1'), 2, 5);
+    for (let seed = 1; seed <= 10; seed++) {
+      const { slots } = compose(
+        [wordBox5, sentenceBox5, numberBox5],
+        {
+          newItemsToday: 6,
+          enabledExercises: PHASE_3,
+          settings: { speech: true },
+        },
+        seed,
+      );
+      const typeOf = (id: string) => slots.find((slot) => slot.itemId === id)?.exercise;
+      expect(typeOf('t01-kopf')).toBe('E6');
+      expect(typeOf('t08-seit-wann')).toBe('E6');
+      expect(typeOf('t03-bp-1')).toBe('E9');
+    }
+  });
+
+  it('does not report a speaking shortfall when no speaking type is enabled', () => {
+    const { speakingShortfall } = compose(states, {
+      enabledExercises: PHASE_3,
+      settings: { speech: true },
+    });
+    expect(speakingShortfall).toBe(0);
+  });
+
+  it('does not offer E4 as a quiz when E4 is disabled, even with a German voice', () => {
+    for (let seed = 1; seed <= 20; seed++) {
+      const { slots } = compose([], { enabledExercises: ['E1', 'E2', 'E3', 'E5', 'E6'] }, seed);
+      for (const slot of slots.filter((s) => s.followUp)) expect(slot.exercise).toBe('E3');
+    }
   });
 });

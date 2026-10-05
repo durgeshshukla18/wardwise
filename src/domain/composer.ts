@@ -46,12 +46,33 @@ function byDue(a: Entry, b: Entry): number {
   return a.state.dueAt - b.state.dueAt || (a.item.id < b.item.id ? -1 : 1);
 }
 
+const ALL_EXERCISES: readonly ExerciseId[] = [
+  'E1',
+  'E2',
+  'E3',
+  'E4',
+  'E5',
+  'E6',
+  'E7',
+  'E8',
+  'E9',
+  'E10',
+];
+
 /** The exercise for an item that has had its Learn card. Only types valid for the item. */
-function chooseExercise(item: Item, box: Box, capabilities: Capabilities, rng: Rng): ExerciseId {
+function chooseExercise(
+  item: Item,
+  box: Box,
+  capabilities: Capabilities,
+  enabled: ReadonlySet<ExerciseId>,
+  rng: Rng,
+): ExerciseId {
   // Boxes 4 and 5 fall back to the box 3 production types before giving up.
   const tiers = box >= 4 ? [TYPES_BY_BOX[box], TYPES_BY_BOX[3]] : [TYPES_BY_BOX[box]];
   for (const tier of tiers) {
-    const valid = tier.filter((exercise) => isValidExercise(exercise, item, capabilities));
+    const valid = tier.filter(
+      (exercise) => enabled.has(exercise) && isValidExercise(exercise, item, capabilities),
+    );
     if (valid.length > 0) return pick(valid, rng);
   }
   return 'E3';
@@ -86,9 +107,14 @@ export function scheduleRetry(
 }
 
 export function composeSession(input: ComposeInput): ComposedSession {
-  const { items, states, now, day, settings, newItemsToday, rng } = input;
+  const { items, states, now, day, settings, newItemsToday, rng, extraRound = false } = input;
   const length = settings.sessionLength;
-  const capabilities: Capabilities = { speech: settings.speech, audio: settings.audio };
+  const enabled = new Set<ExerciseId>(input.enabledExercises ?? ALL_EXERCISES);
+  // A disabled E4 is never offered as a retry or a quiz, even when a German voice exists.
+  const capabilities: Capabilities = {
+    speech: settings.speech,
+    audio: settings.audio && enabled.has('E4'),
+  };
 
   const known: Entry[] = [];
   const unmet: Item[] = [];
@@ -129,20 +155,26 @@ export function composeSession(input: ComposeInput): ComposedSession {
   take(dueEntries, DUE_CAP);
 
   // 3. New items, only while the backlog is small and today's limit is not reached.
-  if (dueEntries.length < DUE_BACKLOG_LIMIT && newItemsToday < NEW_PER_DAY) {
-    const allowed = Math.min(NEW_CAP, NEW_PER_DAY - newItemsToday);
-    const sameLevel = unmet.filter((item) => item.level === settings.level);
-    const otherLevel = unmet.filter((item) => item.level !== settings.level);
-    for (const item of [...sameLevel, ...otherLevel].slice(0, Math.min(allowed, room()))) {
+  const newPool = [
+    ...unmet.filter((item) => item.level === settings.level),
+    ...unmet.filter((item) => item.level !== settings.level),
+  ];
+  const backlogSmall = dueEntries.length < DUE_BACKLOG_LIMIT;
+  const addNew = (limit: number) => {
+    const dailyLeft = NEW_PER_DAY - newItemsToday - pickedNew.length;
+    const count = Math.min(limit, dailyLeft, room());
+    for (const item of newPool.slice(pickedNew.length, pickedNew.length + Math.max(0, count))) {
       pickedNew.push(item);
       chosen.add(item.id);
     }
-  }
+  };
+  if (backlogSmall) addNew(NEW_CAP);
 
-  // 4. Fill with Learning items not seen today, then random Strong items.
+  // 4. Fill with Learning items not seen today, then random Strong items. An Extra round also
+  //    allows Learning items that were already seen today.
   const unseenToday = ({ state }: Entry) =>
     state.lastSeenAt === null || state.lastSeenAt < day.startMs;
-  take(known.filter((e) => e.state.box <= 3 && unseenToday(e)).sort(byDue), room());
+  take(known.filter((e) => e.state.box <= 3 && (extraRound || unseenToday(e))).sort(byDue), room());
   take(
     shuffle(
       known.filter((e) => e.state.box >= 4),
@@ -151,17 +183,23 @@ export function composeSession(input: ComposeInput): ComposedSession {
     room(),
   );
 
+  // 5. Only when nothing else fills the session: more new items, up to the daily cap. A learner
+  //    with enough to review never sees more than the 2 from step 3.
+  if (backlogSmall && room() > 0) addNew(NEW_PER_DAY);
+
   // Pick an exercise for each item. A new item always starts with its Learn card.
   let slots: Slot[] = [
     ...picked.map(({ item, state }) => ({
       itemId: item.id,
-      exercise: chooseExercise(item, state.box, capabilities, rng),
+      exercise: chooseExercise(item, state.box, capabilities, enabled, rng),
     })),
     ...pickedNew.map((item): Slot => ({ itemId: item.id, exercise: 'E1' })),
   ];
 
   // When speech works, at least about 3 in 10 exercises must be spoken.
-  const required = capabilities.speech ? Math.min(speakingMinimum(length), slots.length) : 0;
+  const speakingEnabled = [...SPEAKING].some((exercise) => enabled.has(exercise));
+  const required =
+    capabilities.speech && speakingEnabled ? Math.min(speakingMinimum(length), slots.length) : 0;
   const spoken = slots.filter((slot) => SPEAKING.has(slot.exercise)).length;
   let shortfall = Math.max(0, required - spoken);
   if (shortfall > 0) {
@@ -175,6 +213,7 @@ export function composeSession(input: ComposeInput): ComposedSession {
           boxOf.has(slot.itemId) &&
           !SPEAKING.has(slot.exercise) &&
           item !== undefined &&
+          enabled.has('E7') &&
           isValidExercise('E7', item, capabilities)
         );
       })

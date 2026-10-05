@@ -95,6 +95,10 @@ export type ComposeInput = {
   /** New items already learned on this calendar day. */
   newItemsToday: number;
   rng: Rng;
+  /** An Extra round: Learning items seen today may be asked again. Default false. */
+  extraRound?: boolean;
+  /** Exercise types the app can run. Others fall back by the usual rules. Default: all. */
+  enabledExercises?: readonly ExerciseId[];
 };
 
 export type ComposedSession = {

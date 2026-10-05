@@ -299,7 +299,14 @@ The Daily Case rotates through these. Add more only after the first three are re
 
 ### Demo seed
 
-The demo profile (F-01) is created by a script (`/scripts/seed-demo.ts`), not by hand. It sets a 9 day streak with 1 freeze held, about 40 items spread across boxes 1 to 5, and these 6 Mistake Bank items:
+The demo profile (F-01) is created by a script (`/scripts/seed-demo.ts`), not by hand. The Try demo button uses the same builder (`src/data/demo-seed.ts`, which makes no database calls). It takes `today` and a random seed as arguments, so the same inputs always give the same profile. It sets:
+
+- A 9 day streak with 1 freeze held. The last counted day is yesterday and today has no row, so Today shows 9 days and finishing one Shift Break takes it to 10. There are `days` rows for the last 28 days. Replaying them from scratch, one day at a time, gives current 9 and 1 freeze, and a test checks this.
+- 40 items spread across boxes 1 to 5. The rest stay New. Items in boxes 4 and 5 have `everProduced` true. Every state is built by replaying answers through the engine's own functions, so due times follow the box waits.
+- Exactly 7 items due within the next 24 hours, and the 6 Mistake Bank items below are among them. Every other item is due later. As a result, only the Mistake Bank items sit in box 1, because any other box 1 item is always due within 24 hours.
+- An onboarded profile for the persona in the PRD (Anjali), with plausible onboarding answers, level A1 and a session length of 10.
+
+The 6 Mistake Bank items:
 
 | Item | Error type |
 | --- | --- |

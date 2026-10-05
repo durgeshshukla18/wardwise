@@ -16,17 +16,20 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "validate-content": "node scripts/validate-content.ts"
+    "validate-content": "node scripts/validate-content.ts",
+    "seed-demo": "node scripts/seed-demo.ts"
   },
   "dependencies": {
     "@fontsource/noto-sans-devanagari": "5.3.0",
     "@fontsource/source-sans-3": "5.3.0",
     "@fontsource/source-serif-4": "5.3.0",
     "dexie": "4.4.6",
+    "lucide-react": "1.52.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-router": "8.4.0",
-    "zod": "4.6.5"
+    "zod": "4.6.5",
+    "zustand": "5.0.15"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
@@ -40,6 +43,7 @@
     "eslint": "10.12.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-react-hooks": "7.1.1",
+    "fake-indexeddb": "6.2.5",
     "globals": "17.13.0",
     "prettier": "3.9.9",
     "tailwindcss": "4.3.3",

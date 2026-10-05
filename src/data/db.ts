@@ -28,6 +28,11 @@ export type WardwiseDb = Dexie & {
   events: EntityTable<EventRow, 'id'>;
 };
 
-export const db = new Dexie('wardwise') as WardwiseDb;
+/** Tests pass their own name so each one gets an empty database. */
+export function createDb(name = 'wardwise'): WardwiseDb {
+  const instance = new Dexie(name) as WardwiseDb;
+  instance.version(SCHEMA_VERSION).stores(STORES);
+  return instance;
+}
 
-db.version(SCHEMA_VERSION).stores(STORES);
+export const db = createDb();

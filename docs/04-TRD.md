@@ -259,4 +259,4 @@ Full support on current Chrome and Edge for Android and desktop. Safari and Fire
 
 ### Events logged on the device
 
-`session_start`, `session_end`, `exercise_result`, `speech_used`, `speech_unsupported`, `ai_call`, `ai_fallback`, `mistake_bank_enter`, `mistake_bank_recover`, `streak_freeze_used`, `feedback_sent`. Each has a timestamp and a small props object, with no free text from the learner except in the feedback form.
+`session_start`, `session_end`, `exercise_result`, `speech_used`, `speech_unsupported`, `ai_call`, `ai_fallback`, `mistake_bank_enter`, `mistake_bank_recover`, `streak_freeze_used`, `feedback_sent`. Each has a timestamp and a small props object, with no free text from the learner except in the feedback form. Props hold only ids, exercise codes, error types, numbers and booleans. A failure to save an event is reported to the console and never stops the learner.

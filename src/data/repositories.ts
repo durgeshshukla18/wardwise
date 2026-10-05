@@ -4,9 +4,11 @@ import type { WardwiseDb } from './db.ts';
 import type { DemoSeed } from './demo-seed.ts';
 import {
   SINGLETON_KEY,
+  type AttemptRow,
   type DayRow,
   type EventRow,
   type ProfileRow,
+  type SessionRow,
   type StreakRow,
 } from './schema.ts';
 
@@ -36,6 +38,24 @@ export function createRepositories(db: WardwiseDb) {
     put: (row: StreakRow) => db.streak.put(row),
   };
 
+  const attempts = {
+    add: (row: AttemptRow) => db.attempts.add(row),
+    all: (): Promise<AttemptRow[]> => db.attempts.toArray(),
+    /** How many items had their first Learn card (E1) since `startMs`. */
+    newItemsSince: (startMs: number): Promise<number> =>
+      db.attempts
+        .where('ts')
+        .aboveOrEqual(startMs)
+        .filter((attempt) => attempt.exercise === 'E1')
+        .count(),
+  };
+
+  const sessions = {
+    get: (id: string): Promise<SessionRow | undefined> => db.sessions.get(id),
+    all: (): Promise<SessionRow[]> => db.sessions.toArray(),
+    update: (id: string, changes: Partial<SessionRow>) => db.sessions.update(id, changes),
+  };
+
   const events = {
     add: (row: EventRow) => db.events.add(row),
     all: (): Promise<EventRow[]> => db.events.toArray(),
@@ -59,7 +79,45 @@ export function createRepositories(db: WardwiseDb) {
     });
   }
 
-  return { profile, itemStates, days, streak, events, resetAll, loadSeed };
+  /** Saves a new session and today's day row together. */
+  async function startSession(row: SessionRow, day: DayRow): Promise<void> {
+    await db.transaction('rw', db.sessions, db.days, async () => {
+      await db.sessions.add(row);
+      await db.days.put(day);
+    });
+  }
+
+  /**
+   * Saves one completed exercise in one transaction: the attempt, the item's new state (null when
+   * a retry changes nothing), today's day row, and the streak when it changed.
+   */
+  async function recordExercise(entry: {
+    attempt: AttemptRow;
+    itemState: ItemState | null;
+    day: DayRow;
+    streak: StreakRow | null;
+  }): Promise<void> {
+    await db.transaction('rw', db.attempts, db.itemState, db.days, db.streak, async () => {
+      await db.attempts.add(entry.attempt);
+      if (entry.itemState) await db.itemState.put(entry.itemState);
+      await db.days.put(entry.day);
+      if (entry.streak) await db.streak.put(entry.streak);
+    });
+  }
+
+  return {
+    profile,
+    itemStates,
+    days,
+    streak,
+    attempts,
+    sessions,
+    events,
+    resetAll,
+    loadSeed,
+    startSession,
+    recordExercise,
+  };
 }
 
 export type Repositories = ReturnType<typeof createRepositories>;

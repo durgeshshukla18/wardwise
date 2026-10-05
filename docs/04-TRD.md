@@ -157,7 +157,7 @@ Content is static JSON in the bundle. Only learner state is stored.
 | `profile` | `id` | name, level, sessionLength, hindiHints, speechOn, audioSpeed, onboardedAt, onboarding (the 3 answers: goal, dailyTime, selfLevel) |
 | `itemState` | `itemId` | box (1 to 5), dueAt (ms), state (`new`, `learning`, `strong`), correct, wrong, lastSeenAt, everProduced (boolean), inMistakeBank (boolean), bankEnteredAt, bankCorrectDays (list of local dates), bankErrorType (optional) |
 | `attempts` | `id` | sessionId, itemId, exercise (E1 to E10), correct, errorType, answer, ts, aiUsed |
-| `sessions` | `id` | startedAt, endedAt, mode, itemIds, completed |
+| `sessions` | `id` | startedAt, endedAt, mode (`shift_break`, `topic` for a session started from Practice, `drill` for a Mistake Bank group, `scenario`, `daily_case`; an Extra round is a `shift_break` session), itemIds, completed |
 | `days` | `date` (local YYYY-MM-DD) | exercisesDone, sessions |
 | `streak` | `id` | current, best, freezes, lastCountedDate, freezeDays (list of local dates saved by a freeze) |
 | `aiCache` | `key` | response, createdAt |

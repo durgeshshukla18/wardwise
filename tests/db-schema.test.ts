@@ -1,7 +1,7 @@
 // Checks the Dexie stores against the data model table in docs/04-TRD.md.
 import { describe, expect, it } from 'vitest';
 
-import { SCHEMA_VERSION, STORES } from '../src/data/schema.ts';
+import { SCHEMA_VERSION, SESSION_MODES, STORES } from '../src/data/schema.ts';
 import { readRepoFile, stripTicks, tableRows } from './docs.ts';
 
 const trd = readRepoFile('docs/04-TRD.md');
@@ -28,5 +28,11 @@ describe('Dexie schema', () => {
   it('indexes only the agreed fields', () => {
     expect(STORES.itemState).toBe('itemId, dueAt');
     expect(STORES.attempts).toBe('id, sessionId, itemId, ts');
+  });
+
+  it('lists the session modes named in the sessions row', () => {
+    const row = tableRows(trd, 'Table').find(([table]) => table === '`sessions`') ?? [];
+    const modes = [...(row[2] ?? '').matchAll(/\(`(\w+)`|, `(\w+)`/g)].map((m) => m[1] ?? m[2]);
+    expect(modes).toEqual([...SESSION_MODES]);
   });
 });

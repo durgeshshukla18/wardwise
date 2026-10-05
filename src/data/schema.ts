@@ -63,11 +63,15 @@ export type AttemptRow = {
   aiUsed: boolean;
 };
 
+/** An Extra round is a `shift_break` session, not a sixth mode. */
+export const SESSION_MODES = ['shift_break', 'topic', 'drill', 'scenario', 'daily_case'] as const;
+export type SessionMode = (typeof SESSION_MODES)[number];
+
 export type SessionRow = {
   id: string;
   startedAt: number;
   endedAt: number | null;
-  mode: string;
+  mode: SessionMode;
   itemIds: string[];
   completed: boolean;
 };

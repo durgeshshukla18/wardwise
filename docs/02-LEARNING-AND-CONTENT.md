@@ -63,14 +63,14 @@ Every item has a box from 1 to 5, a due time, and counts of correct and wrong an
 | 5 | 14 days | Strong |
 
 1. A new item enters box 1 after its first Learn card (E1). Until then its state is New. Its due time is set to now, so the composer can quiz it once later in the same session with E3 or E4.
-2. A correct answer moves the item up one box (maximum 5) and sets the due time from the table for the new box.
+2. A correct answer moves the item up one box (maximum 5) and sets the due time from the table for the new box, but only if the item was due at that moment (`dueAt` is less than or equal to now). If it was not due, for example in an Extra round or a drill before its due time, the box and due time stay unchanged. The answer still counts: `everProduced`, the Mistake Bank days and the counts all update. This stops Extra rounds from pushing words to Strong without real spaced review.
 3. A wrong answer moves the item to box 1, due in 1 day, and adds it to the Mistake Bank with an error type.
 4. Recognition-only cap: if the item has never been answered correctly in a Production format, it cannot go above box 3. A word cannot become Strong by multiple choice alone.
 5. Same-session retry: a wrong item is asked once more after 2 other exercises, in an easier format (E3 or E4). The retry does not change the box. Its result is shown as "Fixed for now" or "Still tricky".
 6. Strong means box 4 or 5.
 7. Due times are multiples of 24 hours in milliseconds (1 day is 86,400,000 ms). Local calendar dates are passed to the engine as `YYYY-MM-DD` strings, together with the timestamp of local midnight.
 8. State is derived: New until the first Learn card, Learning for boxes 1 to 3, Strong for boxes 4 and 5. A Learn card is not an answer. It moves a New item into box 1, due now, and changes no counts. Recording an answer for an item that has not had its Learn card is an error.
-9. A correct Production answer sets `everProduced`. The recognition cap in rule 4 uses it, counting the answer being recorded. A correct answer never lowers a box. A correct answer moves an item up even when it was not yet due, for example in an Extra round.
+9. A correct Production answer sets `everProduced`. The recognition cap in rule 4 uses it, counting the answer being recorded. A correct answer never lowers a box. A wrong answer always drops the item to box 1, due or not.
 10. The same-session retry in rule 5 comes back after 2 other exercises, or is appended when fewer than 2 remain. A retry is never retried. It changes nothing about the item: not the box, the counts or the Mistake Bank. E4 is only used when a German voice is available.
 
 ### Mistake Bank rules

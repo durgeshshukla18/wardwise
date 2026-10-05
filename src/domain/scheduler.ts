@@ -3,6 +3,8 @@ import type {
   AnswerInput,
   AnswerResult,
   Box,
+  ExerciseId,
+  Format,
   ItemState,
   ItemStateName,
   RetryOutcome,
@@ -21,6 +23,12 @@ export const RETRY_LABELS: Readonly<Record<RetryOutcome, string>> = {
   fixed_for_now: 'Fixed for now',
   still_tricky: 'Still tricky',
 };
+
+/** E2 to E5 are recognition. E6 to E10 make the learner produce German. E1 is not an answer. */
+export function exerciseFormat(exercise: ExerciseId): Format | null {
+  if (exercise === 'E1') return null;
+  return ['E2', 'E3', 'E4', 'E5'].includes(exercise) ? 'recognition' : 'production';
+}
 
 /** Learning for boxes 1 to 3, Strong for boxes 4 and 5. */
 export function stateForBox(box: Box): Exclude<ItemStateName, 'new'> {
@@ -59,16 +67,19 @@ export function applyAnswer(state: ItemState, input: AnswerInput): AnswerResult 
 
 function applyCorrect(state: ItemState, input: AnswerInput): AnswerResult {
   const everProduced = state.everProduced || input.format === 'production';
+  // Only a review that was due moves the item. Extra rounds and drills before the due time
+  // still count the answer, but the box and due time stay as they are.
+  const wasDue = state.dueAt <= input.now;
   const raised = Math.min(state.box + 1, 5) as Box;
   const capped = everProduced ? raised : (Math.min(raised, RECOGNITION_CAP) as Box);
   // A correct answer never lowers the box.
-  const box = Math.max(capped, state.box) as Box;
+  const box = wasDue ? (Math.max(capped, state.box) as Box) : state.box;
 
   const next: ItemState = {
     ...state,
     box,
-    dueAt: input.now + BOX_WAIT_DAYS[box] * DAY_MS,
-    state: stateForBox(box),
+    dueAt: wasDue ? input.now + BOX_WAIT_DAYS[box] * DAY_MS : state.dueAt,
+    state: wasDue ? stateForBox(box) : state.state,
     correct: state.correct + 1,
     lastSeenAt: input.now,
     everProduced,

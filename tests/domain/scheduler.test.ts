@@ -11,16 +11,17 @@ import {
   completeLearnCard,
   createNewItemState,
   dueWithin,
+  exerciseFormat,
   nextReviewAt,
   stateForBox,
 } from '../../src/domain/scheduler.ts';
-import type { AnswerInput, Slot } from '../../src/domain/types.ts';
+import type { AnswerInput, ItemState, Slot } from '../../src/domain/types.ts';
 import { NOW, TODAY, state } from './fixtures.ts';
 
-const right = (format: AnswerInput['format']): AnswerInput => ({
+const right = (format: AnswerInput['format'], now = NOW): AnswerInput => ({
   correct: true,
   format,
-  now: NOW,
+  now,
   day: TODAY,
   errorType: null,
 });
@@ -32,6 +33,14 @@ const wrong: AnswerInput = {
   errorType: 'article',
 };
 
+/** An item that is due at NOW. A correct answer only moves an item that was due. */
+const dueNow = (overrides: Partial<ItemState> = {}): ItemState =>
+  state('t01-kopf', { dueAt: NOW, ...overrides });
+
+/** Answers at the moment the item falls due, so the answer moves it. */
+const answerWhenDue = (current: ItemState, format: AnswerInput['format']): ItemState =>
+  applyAnswer(current, right(format, Math.max(NOW, current.dueAt))).state;
+
 describe('scheduler: test plan cases', () => {
   it('#1 new item, Learn card completed: box 1, Learning, due now', () => {
     const fresh = createNewItemState('t01-kopf', NOW - DAY_MS);
@@ -40,30 +49,30 @@ describe('scheduler: test plan cases', () => {
     expect(learned).toMatchObject({ box: 1, state: 'learning', dueAt: NOW, lastSeenAt: NOW });
   });
 
-  it('#2 box 1, correct recognition answer: box 2, due in 2 days', () => {
-    const { state: next } = applyAnswer(state('t01-kopf', { box: 1 }), right('recognition'));
+  it('#2 box 1, due, correct recognition answer: box 2, due in 2 days', () => {
+    const { state: next } = applyAnswer(dueNow({ box: 1 }), right('recognition'));
     expect(next).toMatchObject({ box: 2, state: 'learning', dueAt: NOW + 2 * DAY_MS });
   });
 
-  it('#3 box 3, never produced, correct recognition answer: stays box 3, due in 4 days', () => {
+  it('#3 box 3, due, never produced, correct recognition answer: stays box 3, due in 4 days', () => {
     const { state: next } = applyAnswer(
-      state('t01-kopf', { box: 3, everProduced: false }),
+      dueNow({ box: 3, everProduced: false }),
       right('recognition'),
     );
     expect(next).toMatchObject({ box: 3, dueAt: NOW + 4 * DAY_MS, everProduced: false });
   });
 
-  it('#4 box 3, correct production answer: box 4, Strong, due in 7 days', () => {
+  it('#4 box 3, due, correct production answer: box 4, Strong, due in 7 days', () => {
     const { state: next } = applyAnswer(
-      state('t01-kopf', { box: 3, everProduced: false }),
+      dueNow({ box: 3, everProduced: false }),
       right('production'),
     );
     expect(next).toMatchObject({ box: 4, state: 'strong', dueAt: NOW + 7 * DAY_MS });
   });
 
-  it('#5 box 5, correct answer: stays box 5, due in 14 days', () => {
+  it('#5 box 5, due, correct answer: stays box 5, due in 14 days', () => {
     const { state: next } = applyAnswer(
-      state('t01-kopf', { box: 5, state: 'strong', everProduced: true }),
+      dueNow({ box: 5, state: 'strong', everProduced: true }),
       right('production'),
     );
     expect(next).toMatchObject({ box: 5, state: 'strong', dueAt: NOW + 14 * DAY_MS });
@@ -99,6 +108,30 @@ describe('scheduler: test plan cases', () => {
     expect(afterRetry.box).toBe(1);
     expect(RETRY_LABELS[outcome]).toBe('Fixed for now');
   });
+
+  it('#19 box 2, not yet due, correct production answer: box and due time unchanged, answer still counted', () => {
+    const early = state('t01-kopf', { box: 2, dueAt: NOW + DAY_MS, everProduced: false });
+    const { state: next } = applyAnswer(early, right('production'));
+    expect(next).toMatchObject({
+      box: 2,
+      dueAt: NOW + DAY_MS,
+      state: 'learning',
+      correct: 1,
+      lastSeenAt: NOW,
+      everProduced: true,
+    });
+  });
+
+  it('#20 box 4, not yet due, wrong answer: still drops to box 1, due in 1 day', () => {
+    const early = state('t01-kopf', {
+      box: 4,
+      state: 'strong',
+      everProduced: true,
+      dueAt: NOW + 5 * DAY_MS,
+    });
+    const { state: next } = applyAnswer(early, wrong);
+    expect(next).toMatchObject({ box: 1, dueAt: NOW + DAY_MS, state: 'learning' });
+  });
 });
 
 describe('scheduler: section 3 rules', () => {
@@ -111,7 +144,7 @@ describe('scheduler: section 3 rules', () => {
       [4, 14],
     ] as const) {
       const { state: next } = applyAnswer(
-        state('t01-kopf', { box: from, everProduced: true }),
+        dueNow({ box: from, everProduced: true }),
         right('production'),
       );
       expect(next.dueAt).toBe(NOW + days * DAY_MS);
@@ -150,34 +183,52 @@ describe('scheduler: section 3 rules', () => {
   });
 
   it('a correct Production answer sets everProduced, a recognition answer does not', () => {
-    expect(applyAnswer(state('t01-kopf'), right('production')).state.everProduced).toBe(true);
-    expect(applyAnswer(state('t01-kopf'), right('recognition')).state.everProduced).toBe(false);
+    expect(applyAnswer(dueNow(), right('production')).state.everProduced).toBe(true);
+    expect(applyAnswer(dueNow(), right('recognition')).state.everProduced).toBe(false);
   });
 
   it('recognition alone cannot lift an item above box 3, however often it is answered', () => {
-    let current = state('t01-kopf', { box: 1 });
-    for (let i = 0; i < 6; i++) current = applyAnswer(current, right('recognition')).state;
+    let current = dueNow({ box: 1 });
+    for (let i = 0; i < 6; i++) current = answerWhenDue(current, 'recognition');
     expect(current.box).toBe(3);
     expect(current.state).toBe('learning');
   });
 
   it('the cap lifts after one correct Production answer', () => {
-    let current = state('t01-kopf', { box: 3 });
-    current = applyAnswer(current, right('production')).state;
-    current = applyAnswer(current, right('recognition')).state;
+    let current = dueNow({ box: 3 });
+    current = answerWhenDue(current, 'production');
+    current = answerWhenDue(current, 'recognition');
     expect(current.box).toBe(5);
   });
 
   it('a correct answer never lowers a box, even for an item that was never produced', () => {
     const { state: next } = applyAnswer(
-      state('t01-kopf', { box: 4, state: 'strong', everProduced: false }),
+      dueNow({ box: 4, state: 'strong', everProduced: false }),
       right('recognition'),
     );
     expect(next.box).toBe(4);
   });
 
+  it('an item that falls due exactly now moves up', () => {
+    const { state: next } = applyAnswer(dueNow({ box: 1 }), right('recognition'));
+    expect(next.box).toBe(2);
+    const justEarly = applyAnswer(
+      state('t01-kopf', { box: 1, dueAt: NOW + 1 }),
+      right('recognition'),
+    );
+    expect(justEarly.state.box).toBe(1);
+  });
+
+  it('a not-due answer still counts and updates lastSeenAt, and a later due answer moves it', () => {
+    const early = state('t01-kopf', { box: 2, dueAt: NOW + DAY_MS });
+    const afterEarly = applyAnswer(early, right('recognition')).state;
+    expect(afterEarly).toMatchObject({ box: 2, correct: 1, lastSeenAt: NOW });
+    const afterDue = applyAnswer(afterEarly, right('recognition', NOW + DAY_MS)).state;
+    expect(afterDue).toMatchObject({ box: 3, correct: 2, dueAt: NOW + DAY_MS + 4 * DAY_MS });
+  });
+
   it('counts right and wrong answers and updates lastSeenAt', () => {
-    const afterRight = applyAnswer(state('t01-kopf'), right('recognition')).state;
+    const afterRight = applyAnswer(dueNow(), right('recognition')).state;
     expect(afterRight).toMatchObject({ correct: 1, wrong: 0, lastSeenAt: NOW });
     const afterWrong = applyAnswer(afterRight, wrong).state;
     expect(afterWrong).toMatchObject({ correct: 1, wrong: 1, lastSeenAt: NOW });
@@ -196,11 +247,22 @@ describe('scheduler: section 3 rules', () => {
   });
 
   it('does not change the stored state object', () => {
-    const before = state('t01-kopf', { box: 3 });
+    const before = dueNow({ box: 3 });
     const copy = structuredClone(before);
     applyAnswer(before, wrong);
     applyAnswer(before, right('production'));
     expect(before).toEqual(copy);
+  });
+});
+
+describe('scheduler: exercise formats', () => {
+  it('E2 to E5 are recognition, E6 to E10 are production, E1 is not an answer', () => {
+    expect(exerciseFormat('E1')).toBeNull();
+    for (const e of ['E2', 'E3', 'E4', 'E5'] as const)
+      expect(exerciseFormat(e)).toBe('recognition');
+    for (const e of ['E6', 'E7', 'E8', 'E9', 'E10'] as const) {
+      expect(exerciseFormat(e)).toBe('production');
+    }
   });
 });
 

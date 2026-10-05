@@ -15,10 +15,10 @@ These cases are the contract for `/domain`. Each must pass before Gate 2. Each i
 | # | Given | When | Then |
 | --- | --- | --- | --- |
 | 1 | New item | Learn card (E1) completed | Box 1, state Learning, due now |
-| 2 | Box 1 | Correct recognition answer | Box 2, due in 2 days |
-| 3 | Box 3, never answered by producing German | Correct recognition answer | Stays box 3, due in 4 days |
-| 4 | Box 3 | Correct production answer | Box 4, state Strong, due in 7 days |
-| 5 | Box 5 | Correct answer | Stays box 5, due in 14 days |
+| 2 | Box 1, due | Correct recognition answer | Box 2, due in 2 days |
+| 3 | Box 3, due, never answered by producing German | Correct recognition answer | Stays box 3, due in 4 days |
+| 4 | Box 3, due | Correct production answer | Box 4, state Strong, due in 7 days |
+| 5 | Box 5, due | Correct answer | Stays box 5, due in 14 days |
 | 6 | Box 4 | Wrong answer | Box 1, due in 1 day, enters Mistake Bank with an error type |
 | 7 | Item entered the bank on day 1 | Correct recognition answer on day 2 | Day 2 recorded, item stays in the bank |
 | 8 | Item has a correct answer on day 2 | Correct production answer on day 3 | Item recovered and leaves the bank |
@@ -32,6 +32,8 @@ These cases are the contract for `/domain`. Each must pass before Gate 2. Each i
 | 16 | Streak of 9, 1 freeze held, one day missed | Update streak | Streak stays 9, freeze used |
 | 17 | Streak of 9, 1 freeze held, two days missed in a row | Update streak | Streak resets to 0 |
 | 18 | Only 4 exercises done today | Update streak | Day does not count |
+| 19 | Box 2, not yet due | Correct production answer | Box and due time unchanged, the answer still counted, `everProduced` set |
+| 20 | Box 4, not yet due | Wrong answer | Box 1, due in 1 day |
 
 Checker cases:
 

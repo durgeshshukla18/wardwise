@@ -24,6 +24,6 @@ Questions raised by the coding agent, with the owner's answer.
 
 | # | Question | Proposed default | Status |
 | --- | --- | --- | --- |
-| P3-1 | The demo seed (F-01) needs about 40 items across boxes 1 to 5, but 20 items exist. Will more items arrive before Phase 3? | Owner supplies at least 20 more items before the seed script is written | Open |
-| P3-2 | The demo seed lists "Seit wann haben Sie Schmerzen?" as a Mistake Bank item, but `t08-seit-wann` has `de` "Seit wann haben Sie die Schmerzen?" (the seed text is one of its accepted variants). Is the seed item `t08-seit-wann`? | Yes, seed `t08-seit-wann` | Open |
-| P3-3 | `sessions.mode` has no list of allowed values. | `shift_break`, `practice`, `drill`, `extra_round`, `daily_case` | Open |
+| P3-1 | The demo seed (F-01) needs about 40 items across boxes 1 to 5, but 20 items exist. Will more items arrive before Phase 3? | Owner supplied 29 more draft items (49 in total). No Hindi hints | Answered |
+| P3-2 | The demo seed lists "Seit wann haben Sie Schmerzen?" as a Mistake Bank item, but `t08-seit-wann` has `de` "Seit wann haben Sie die Schmerzen?" (the seed text is one of its accepted variants). Is the seed item `t08-seit-wann`? | Yes, seed `t08-seit-wann` as the word_order item. Demo seed table in 02 updated | Answered |
+| P3-3 | `sessions.mode` has no list of allowed values. | Owner's five: `shift_break`, `topic`, `drill`, `scenario`, `daily_case`. An Extra round is a `shift_break` session. Dropped from my proposal: `practice` (renamed `topic`) and `extra_round`. Table in 04 updated | Answered |

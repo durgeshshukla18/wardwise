@@ -262,4 +262,4 @@ The demo profile (F-01) is created by a script (`/scripts/seed-demo.ts`), not by
 | das Fieber | spelling |
 | die Tablette | listening |
 | hundertzwanzig zu achtzig | number |
-| Seit wann haben Sie Schmerzen? | word_order |
+| t08-seit-wann (Seit wann haben Sie die Schmerzen?) | word_order |

@@ -89,7 +89,7 @@ A session has 10 exercises by default (Settings can switch to 5 or 15). Fill in 
 3. New items: up to 2, and only if fewer than 12 items are waiting as due. No more than 6 new items per calendar day
 4. If still short, fill with Learning items (boxes 1 to 3) not seen today, then random Strong items
 
-Exercise choice by box: a New item gets E1, then E3 or E4 once more later in the same session. Box 1 reviews use E3 or E4. Box 2 uses E2, E5 or E4. Box 3 uses E6 or E9. Box 4 and 5 use E7, E8 or E10. When speech recognition is supported, at least 3 of the 10 exercises must be E7, E8 or E10. When it is not, E6 replaces them.
+Exercise choice by box: a New item gets E1, then E3 or E4 once more later in the same session. Box 1 reviews use E3 or E4. Box 2 uses E2, E5 or E4. Box 3 uses E6 or E9. Box 4 and 5 use E7, E8 or E10. When speech recognition is supported and switched on, at least 3 of the 10 exercises must be E7, E8 or E10. When it is not, that quota does not apply and E6 replaces E7 only. E8 is tap based and E10 can be typed, so both stay available.
 
 How the composer applies this:
 
@@ -100,7 +100,7 @@ How the composer applies this:
 - The chosen items are shuffled with the random generator that is passed in, so the same seed gives the same session.
 - An exercise is only chosen if it is valid for the item (table below). If none of a box's types is valid, boxes 4 and 5 fall back to the box 3 types, then to E3.
 - The speaking minimum is 2, 3 and 5 exercises for sessions of 5, 10 and 15. If boxes 4 and 5 do not supply enough, slots of box 1 to 3 items are changed to E7, nearest box first. If there are still too few, the composer reports the shortfall and does not fail.
-- Without a German voice, E4 and E9 are replaced by E3 and E6. Without speech, E7, E8 and E10 are replaced by E6. E10 is not composed until scenarios exist (Phase 4).
+- Without a German voice, E4 and E9 are replaced by E3 and E6. Without speech, E7 is replaced by E6. E8 and E10 stay available. E10 is not composed until scenarios exist (Phase 4).
 
 | Type | Valid when |
 | --- | --- |
@@ -111,7 +111,7 @@ How the composer applies this:
 | E5 | A word item whose example sentence contains the word as a whole word |
 | E6 | The item has no `spoken` field |
 | E7 | Speech is on and the item has no `spoken` field |
-| E8 | Speech is on and the item is an A2 sentence of 5 to 9 words (the chips in F-12) |
+| E8 | The item is an A2 sentence of 5 to 9 words (the chips in F-12). No speech needed |
 | E9 | A German voice is available and the item has a `spoken` field and digits as its first accepted answer |
 | E10 | Scenario turns only |
 

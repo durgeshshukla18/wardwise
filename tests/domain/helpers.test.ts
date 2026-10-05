@@ -164,7 +164,7 @@ describe('eligibility', () => {
     expect(isValidExercise('E7', kopf, { ...on, speech: false })).toBe(false);
     expect(isValidExercise('E7', number, on)).toBe(false);
     expect(isValidExercise('E8', sentence, on)).toBe(true);
-    expect(isValidExercise('E8', sentence, { ...on, speech: false })).toBe(false);
+    expect(isValidExercise('E8', sentence, { ...on, speech: false })).toBe(true);
     expect(isValidExercise('E8', kopf, on)).toBe(false);
     expect(isValidExercise('E8', item('t08-allergien'), on)).toBe(false);
     expect(isValidExercise('E8', { ...sentence, level: 'A1' }, on)).toBe(false);

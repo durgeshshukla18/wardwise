@@ -47,13 +47,9 @@ export function isValidExercise(
       return capabilities.speech && !hasSpoken;
     case 'E8': {
       const chips = chipCount(item);
+      // Tap based, so it does not need speech recognition.
       return (
-        capabilities.speech &&
-        !hasSpoken &&
-        item.level === 'A2' &&
-        item.kind === 'sentence' &&
-        chips >= 5 &&
-        chips <= 9
+        !hasSpoken && item.level === 'A2' && item.kind === 'sentence' && chips >= 5 && chips <= 9
       );
     }
     case 'E9':

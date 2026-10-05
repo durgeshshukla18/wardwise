@@ -324,9 +324,10 @@ describe('composer: choosing the exercise', () => {
     expect([...run(3, item('t03-puls-1'), { audio: false })]).toEqual(['E3']);
   });
 
-  it('without speech there is no E7, E8 or E10, and E6 takes their place', () => {
-    const found = run(5, item('t08-seit-wann'), { speech: false });
-    expect([...found]).toEqual(['E6']);
+  it('without speech E7 becomes E6, while E8 stays available because it is tap based', () => {
+    expect([...run(5, item('t08-seit-wann'), { speech: false })]).toEqual(['E8']);
+    expect([...run(5, item('t01-kopf'), { speech: false })]).toEqual(['E6']);
+    expect([...run(4, item('t08-allergien'), { speech: false })]).toEqual(['E6']);
   });
 
   it('only ever picks types that are valid for the item', () => {
@@ -370,10 +371,10 @@ describe('composer: speaking exercises', () => {
     expect(speakingShortfall).toBe(Math.min(3, numbers.length));
   });
 
-  it('never asks for speech when speech is off', () => {
+  it('never uses E7 and never applies the quota when speech is off', () => {
     const states = PLAIN.slice(0, 12).map((entry, i) => due(entry, i, 4));
     const { slots, speakingShortfall } = compose(states, { settings: { speech: false } });
-    expect(slots.some((slot) => SPEAKING.includes(slot.exercise))).toBe(false);
+    expect(slots.some((slot) => slot.exercise === 'E7')).toBe(false);
     expect(speakingShortfall).toBe(0);
   });
 });

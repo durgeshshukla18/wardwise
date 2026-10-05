@@ -61,8 +61,7 @@ describe('demo seed: profile and streak', () => {
         date,
       ).streak;
     }
-    const { id: _id, ...stored } = seed.streak;
-    expect(streak).toEqual(stored);
+    expect({ id: 'me', ...streak }).toEqual(seed.streak);
   });
 
   it('has no row for today, so finishing one session takes the streak to 10', () => {

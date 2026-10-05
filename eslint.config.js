@@ -35,6 +35,15 @@ export default tseslint.config(
           selector: `JSXAttribute[name.name='className'] TemplateElement[value.raw=${arbitraryValue}]`,
           message: arbitraryValueMessage,
         },
+        {
+          selector: 'JSXText[value=/\\S/]',
+          message: 'No text inside components. Put every user-facing string in src/app/copy.ts.',
+        },
+        {
+          selector:
+            'JSXAttribute[name.name=/^(aria-label|title|placeholder|alt)$/] > Literal[value=/\\S/]',
+          message: 'No text inside components. Put every user-facing string in src/app/copy.ts.',
+        },
       ],
     },
   },

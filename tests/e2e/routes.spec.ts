@@ -1,36 +1,96 @@
-// Gate 1: every route in section 5 renders its placeholder with no console errors.
-import { expect, test, type Page } from '@playwright/test';
+// Every route renders without console errors at 390 px and 1280 px, and the guards send each
+// visitor to the right screen.
+import { expect, test } from '@playwright/test';
 
+import { copy } from '../../src/app/copy.ts';
 import { screenRoutes } from '../../src/app/screens.ts';
+import { collectErrors, expectNoHorizontalScroll, tryDemo } from './helpers.ts';
 
-function collectErrors(page: Page): string[] {
-  const errors: string[] = [];
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
-  page.on('pageerror', (error) => errors.push(error.message));
-  return errors;
-}
+// S01, S02 and S03 are real screens with their own headings.
+const headingFor = (id: string, name: string) => (id === 'S03' ? copy.today.title : name);
 
-for (const screen of screenRoutes) {
-  const url = screen.path.replace(':id', 'test-id');
-
-  test(`${screen.id} ${url} renders without console errors`, async ({ page }) => {
+test.describe('without a profile', () => {
+  test('S01 / shows the landing screen', async ({ page }) => {
     const errors = collectErrors(page);
-    await page.goto(url);
-    await expect(page.getByRole('heading', { level: 1, name: screen.name })).toBeVisible();
+    await page.goto('/');
+    await expect(page.getByRole('heading', { level: 1, name: copy.appName })).toBeVisible();
+    await expect(page.getByRole('button', { name: copy.landing.tryDemo })).toBeVisible();
+    await expect(page.getByRole('button', { name: copy.landing.startFresh })).toBeVisible();
+    await expect(page.getByText(copy.landing.storageNote)).toBeVisible();
     await page.waitForLoadState('networkidle');
-
-    const width = await page.evaluate(() => document.documentElement.scrollWidth);
-    expect(width).toBeLessThanOrEqual(page.viewportSize()?.width ?? 0);
+    await expectNoHorizontalScroll(page);
     expect(errors).toEqual([]);
   });
-}
 
-test('unknown URLs redirect to /', async ({ page }) => {
-  const errors = collectErrors(page);
-  await page.goto('/no-such-page');
-  await expect(page).toHaveURL('/');
-  await expect(page.getByRole('heading', { level: 1, name: 'Landing' })).toBeVisible();
-  expect(errors).toEqual([]);
+  for (const path of [
+    '/today',
+    '/start',
+    '/practice',
+    '/session/abc',
+    '/settings',
+    '/no-such-page',
+  ]) {
+    test(`${path} goes to /`, async ({ page }) => {
+      await page.goto(path);
+      await expect(page).toHaveURL('/');
+      await expect(page.getByRole('heading', { level: 1, name: copy.appName })).toBeVisible();
+    });
+  }
+
+  test('Start fresh asks for a first name, then goes to /start', async ({ page }) => {
+    const errors = collectErrors(page);
+    await page.goto('/');
+    await page.getByRole('button', { name: copy.landing.startFresh }).click();
+    await page.getByRole('button', { name: copy.landing.nameContinue }).click();
+    await expect(page.getByRole('alert')).toHaveText(copy.landing.nameRequired);
+    await page.getByLabel(copy.landing.nameLabel).fill('Anna');
+    await page.getByRole('button', { name: copy.landing.nameContinue }).click();
+    await expect(page).toHaveURL('/start');
+
+    // Not onboarded: every other route goes to /start, and so does /.
+    await page.goto('/today');
+    await expect(page).toHaveURL('/start');
+    await page.goto('/');
+    await expect(page).toHaveURL('/start');
+    expect(errors).toEqual([]);
+  });
+
+  test('Start fresh can go back to the two choices', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: copy.landing.startFresh }).click();
+    await page.getByRole('button', { name: copy.landing.nameBack }).click();
+    await expect(page.getByRole('button', { name: copy.landing.tryDemo })).toBeVisible();
+  });
+});
+
+test.describe('with the demo profile', () => {
+  test('the landing and onboarding routes go to /today', async ({ page }) => {
+    await tryDemo(page);
+    await page.goto('/');
+    await expect(page).toHaveURL('/today');
+    await page.goto('/start');
+    await expect(page).toHaveURL('/today');
+  });
+
+  for (const screen of screenRoutes.filter((entry) => !['S01', 'S02'].includes(entry.id))) {
+    const url = screen.path.replace(':id', 'test-id');
+
+    test(`${screen.id} ${url} renders without console errors`, async ({ page }) => {
+      const errors = collectErrors(page);
+      await tryDemo(page);
+      await page.goto(url);
+      await expect(
+        page.getByRole('heading', { level: 1, name: headingFor(screen.id, screen.name) }),
+      ).toBeVisible();
+      await page.waitForLoadState('networkidle');
+      await expectNoHorizontalScroll(page);
+      expect(errors).toEqual([]);
+    });
+  }
+
+  test('an unknown URL goes to /today', async ({ page }) => {
+    await tryDemo(page);
+    await page.goto('/no-such-page');
+    await expect(page).toHaveURL('/today');
+  });
 });

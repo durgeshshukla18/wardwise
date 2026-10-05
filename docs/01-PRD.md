@@ -174,4 +174,4 @@ flowchart TD
 - Desktop (1024 px and wider): the same four destinations in a left rail, Settings at the bottom of the rail.
 - The session runner and scenario runner hide all navigation. Leaving asks "Leave this session? Your answers so far are saved."
 - Routes: `/` landing, `/start` onboarding, `/today`, `/practice`, `/session/:id`, `/scenario/:id`, `/mistakes`, `/progress`, `/word/:id`, `/settings`, `/feedback`.
-- A learner who has not completed onboarding is always sent to `/start`. A returning learner opens on `/today`.
+- With no profile, only `/` (the landing screen) is shown, and every other route goes to `/`. Start fresh asks for a first name on S01, creates the profile and goes to `/start`. A profile that has not completed onboarding is always sent to `/start`. A returning learner opens on `/today`, and `/` and `/start` go there for them. Unknown URLs go to `/`.

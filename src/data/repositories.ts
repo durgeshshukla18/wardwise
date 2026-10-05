@@ -3,7 +3,10 @@ import type { ItemState } from '../domain/types.ts';
 import type { WardwiseDb } from './db.ts';
 import type { DemoSeed } from './demo-seed.ts';
 import {
+  EXPORT_FORMAT,
+  SCHEMA_VERSION,
   SINGLETON_KEY,
+  type ExportFile,
   type AttemptRow,
   type DayRow,
   type EventRow,
@@ -79,6 +82,13 @@ export function createRepositories(db: WardwiseDb) {
     });
   }
 
+  /** Every table, as one object that can be saved as a JSON file. */
+  async function exportAll(exportedAt: number): Promise<ExportFile> {
+    const tables: ExportFile['tables'] = {};
+    for (const table of db.tables) tables[table.name] = await table.toArray();
+    return { format: EXPORT_FORMAT, schemaVersion: SCHEMA_VERSION, exportedAt, tables };
+  }
+
   /** Saves a new session and today's day row together. */
   async function startSession(row: SessionRow, day: DayRow): Promise<void> {
     await db.transaction('rw', db.sessions, db.days, async () => {
@@ -115,6 +125,7 @@ export function createRepositories(db: WardwiseDb) {
     events,
     resetAll,
     loadSeed,
+    exportAll,
     startSession,
     recordExercise,
   };

@@ -26,6 +26,19 @@ type AppState = {
   startDemo: () => Promise<void>;
   /** Creates a profile with a first name. Onboarding comes next. */
   startFresh: (name: string) => Promise<void>;
+  /** Saves the onboarding answers and the level the learner chose, and marks onboarding done. */
+  completeOnboarding: (input: {
+    level: ProfileRow['level'];
+    onboarding: NonNullable<ProfileRow['onboarding']>;
+  }) => Promise<void>;
+  /** Saves a change to a setting. */
+  updateProfile: (
+    changes: Partial<
+      Pick<ProfileRow, 'level' | 'sessionLength' | 'hindiHints' | 'speechOn' | 'audioSpeed'>
+    >,
+  ) => Promise<void>;
+  /** Deletes all progress on this device. */
+  reset: () => Promise<void>;
 };
 
 const empty = {
@@ -93,5 +106,25 @@ export const useApp = create<AppState>()((set, get) => ({
       onboarding: null,
     });
     await get().load();
+  },
+
+  async completeOnboarding({ level, onboarding }) {
+    const profile = get().profile;
+    if (profile === null) return;
+    await repositories.profile.put({ ...profile, level, onboarding, onboardedAt: now() });
+    await get().load();
+  },
+
+  async updateProfile(changes) {
+    const profile = get().profile;
+    if (profile === null) return;
+    const next = { ...profile, ...changes };
+    await repositories.profile.put(next);
+    set({ profile: next });
+  },
+
+  async reset() {
+    await repositories.resetAll();
+    set({ status: 'ready', ...empty });
   },
 }));

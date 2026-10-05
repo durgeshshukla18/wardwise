@@ -22,6 +22,16 @@ export const STORES = {
 
 export const SINGLETON_KEY = 'me';
 
+/** The file Settings exports. Import (Phase 5) rejects a wrong `format` or a newer version. */
+export const EXPORT_FORMAT = 'wardwise-export';
+
+export type ExportFile = {
+  format: typeof EXPORT_FORMAT;
+  schemaVersion: number;
+  exportedAt: number;
+  tables: Record<string, unknown[]>;
+};
+
 export type ProfileRow = {
   id: typeof SINGLETON_KEY;
   name: string;

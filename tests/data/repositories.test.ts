@@ -125,4 +125,33 @@ describe('repositories', () => {
     expect(await repos.streak.get()).toBeUndefined();
     expect(await repos.events.all()).toEqual([]);
   });
+
+  it('exports every table with the schema version, as plain JSON', async () => {
+    const data = seed();
+    await repos.loadSeed(data);
+    await repos.events.add({ id: 'e1', ts: NOW, name: 'session_start', props: {} });
+    const file = await repos.exportAll(NOW);
+    expect(file).toMatchObject({ format: 'wardwise-export', schemaVersion: 1, exportedAt: NOW });
+    expect(Object.keys(file.tables).sort()).toEqual([
+      'aiCache',
+      'aiUsage',
+      'attempts',
+      'days',
+      'events',
+      'feedback',
+      'itemState',
+      'profile',
+      'sessions',
+      'streak',
+    ]);
+    expect(file.tables.itemState).toHaveLength(40);
+    expect(file.tables.profile).toEqual([data.profile]);
+    expect(file.tables.events).toHaveLength(1);
+    expect(JSON.parse(JSON.stringify(file))).toEqual(file);
+  });
+
+  it('exports an empty device as empty tables', async () => {
+    const file = await repos.exportAll(1);
+    for (const rows of Object.values(file.tables)) expect(rows).toEqual([]);
+  });
 });

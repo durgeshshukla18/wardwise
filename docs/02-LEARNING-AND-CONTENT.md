@@ -68,11 +68,16 @@ Every item has a box from 1 to 5, a due time, and counts of correct and wrong an
 4. Recognition-only cap: if the item has never been answered correctly in a Production format, it cannot go above box 3. A word cannot become Strong by multiple choice alone.
 5. Same-session retry: a wrong item is asked once more after 2 other exercises, in an easier format (E3 or E4). The retry does not change the box. Its result is shown as "Fixed for now" or "Still tricky".
 6. Strong means box 4 or 5.
+7. Due times are multiples of 24 hours in milliseconds (1 day is 86,400,000 ms). Local calendar dates are passed to the engine as `YYYY-MM-DD` strings, together with the timestamp of local midnight.
+8. State is derived: New until the first Learn card, Learning for boxes 1 to 3, Strong for boxes 4 and 5. A Learn card is not an answer. It moves a New item into box 1, due now, and changes no counts. Recording an answer for an item that has not had its Learn card is an error.
+9. A correct Production answer sets `everProduced`. The recognition cap in rule 4 uses it, counting the answer being recorded. A correct answer never lowers a box. A correct answer moves an item up even when it was not yet due, for example in an Extra round.
+10. The same-session retry in rule 5 comes back after 2 other exercises, or is appended when fewer than 2 remain. A retry is never retried. It changes nothing about the item: not the box, the counts or the Mistake Bank. E4 is only used when a German voice is available.
 
 ### Mistake Bank rules
 
 - An item enters on any wrong answer, tagged with one error type: `article`, `spelling`, `meaning`, `listening`, `word_order`, `grammar`, `number`, `speech_mismatch`.
-- An item is recovered and leaves the bank when it is answered correctly in two different sessions on two different calendar days after entering, and the second correct answer is in a Production format. Two correct answers on the same calendar day count once.
+- An item is recovered and leaves the bank when it has correct answers on 2 distinct calendar days after the day it entered, and the latest correct answer is in a Production format. Only answers on a later day than the entry day count, and two correct answers on the same day count once. When the item leaves, `inMistakeBank` is false and its error type and list of days are cleared.
+- A wrong answer while the item is in the bank clears the list of days, keeps the item in the bank, and sets its entry time and error type again. Only days after that wrong answer count. This also keeps "wrong in the last 48 hours" correct for the composer.
 - The bank screen groups items by error type and offers a drill for each group (feature F-09).
 
 ### Session composer
@@ -84,23 +89,51 @@ A session has 10 exercises by default (Settings can switch to 5 or 15). Fill in 
 3. New items: up to 2, and only if fewer than 12 items are waiting as due. No more than 6 new items per calendar day
 4. If still short, fill with Learning items (boxes 1 to 3) not seen today, then random Strong items
 
-Exercise choice by box: box 1 uses E1 then E3 or E4. Box 2 uses E2, E5 or E4. Box 3 uses E6 or E9. Box 4 and 5 use E7, E8 or E10. When speech recognition is supported, at least 3 of the 10 exercises must be E7, E8 or E10. When it is not, E6 replaces them.
+Exercise choice by box: a New item gets E1, then E3 or E4 once more later in the same session. Box 1 reviews use E3 or E4. Box 2 uses E2, E5 or E4. Box 3 uses E6 or E9. Box 4 and 5 use E7, E8 or E10. When speech recognition is supported, at least 3 of the 10 exercises must be E7, E8 or E10. When it is not, E6 replaces them.
+
+How the composer applies this:
+
+- The caps (4, 5 and 2) stay the same for sessions of 5 and 15. Step 4 fills whatever room is left.
+- "Waiting as due" counts items that have had a Learn card and are due now, Mistake Bank items included. New items are not counted.
+- A New item is one planned exercise: its Learn card (E1), which is always the first exercise for that item. E1 is never used for an item that has had its Learn card. Its same-session quiz (E3 or E4, after 2 other exercises or at the end) is added on top and does not count toward the session length. Wrong-answer retries are added the same way.
+- New items come from the learner's level first, in content order, and from the other level only when that level has none left. The caller says how many new items were learned today.
+- The chosen items are shuffled with the random generator that is passed in, so the same seed gives the same session.
+- An exercise is only chosen if it is valid for the item (table below). If none of a box's types is valid, boxes 4 and 5 fall back to the box 3 types, then to E3.
+- The speaking minimum is 2, 3 and 5 exercises for sessions of 5, 10 and 15. If boxes 4 and 5 do not supply enough, slots of box 1 to 3 items are changed to E7, nearest box first. If there are still too few, the composer reports the shortfall and does not fail.
+- Without a German voice, E4 and E9 are replaced by E3 and E6. Without speech, E7, E8 and E10 are replaced by E6. E10 is not composed until scenarios exist (Phase 4).
+
+| Type | Valid when |
+| --- | --- |
+| E1 | New items only |
+| E2 | The item is a noun with an article |
+| E3 | Always |
+| E4 | A German voice is available |
+| E5 | A word item whose example sentence contains the word as a whole word |
+| E6 | The item has no `spoken` field |
+| E7 | Speech is on and the item has no `spoken` field |
+| E8 | Speech is on and the item is an A2 sentence of 5 to 9 words (the chips in F-12) |
+| E9 | A German voice is available and the item has a `spoken` field and digits as its first accepted answer |
+| E10 | Scenario turns only |
+
+Number dictation items therefore get E1, E3, E4 and E9 only.
 
 The app never shows a "you are finished" screen. When today's session is done it shows when the next review is due and offers an optional Extra round.
 
 ### Placement
 
-Onboarding shows 5 A1 items as E3 questions. 0 to 2 correct places the learner at A1. 3 to 5 correct asks "You seem ready to start at A2. Start there?" and she chooses. Placement only decides where new items come from. It never locks anything.
+Onboarding shows 5 A1 items as E3 questions. 0 to 2 correct places the learner at A1. 3 to 5 correct asks "You seem ready to start at A2. Start there?" and she chooses. Placement only decides where new items come from. It never locks anything. Placement answers are checked with the checker and scored with `placementLevel`. Placement never calls the scheduler, so it creates no item state and changes no box. The five placement items are still New afterward.
 
 ### Retention loop
 
 Reasons to come back tomorrow, in order of weight:
 
 1. **Items due.** Today shows "7 items due in the next 24 hours" with the Shift Break button.
-2. **Ward Readiness.** Each topic shows its percent of Strong items. It rises with practice and falls slowly if she stops.
+2. **Ward Readiness.** Each topic shows its percent of Strong items. It rises with practice and falls when a Strong item goes back to box 1 after a wrong answer. There is no separate decay over time. It is rounded to a whole number, unseen items count as not strong, and a topic with no items shows 0.
 3. **Daily Case.** One short scenario a day (about 2 minutes), rotating through the scenario library.
 4. **Streak.** A day counts when she completes at least 5 exercises. She earns 1 streak freeze for every 7 day streak, holds a maximum of 2. Each freeze covers one missed day and is used automatically.
 5. **Weekly recap.** On Monday: words fixed last week and new Strong words. No points, no leaderboard.
+
+Streak details: the engine walks the local dates after the last counted date. Each fully missed day uses one freeze, or resets the streak to 0 when none is left. Today is never counted as missed. When today reaches 5 exercises the streak goes up by 1, or restarts at 1 after a reset. A freeze is earned each time the streak reaches a multiple of 7, only on a counted day, up to 2 held. The last counted date means the last date counted or covered by a freeze, so running the update twice never spends a freeze twice. The dates a freeze covered are returned so they can be saved and shown hatched in the calendar.
 
 Rewards are calm and professional: a clean check, a readiness bar moving, a short line of text. No confetti, no sound by default.
 

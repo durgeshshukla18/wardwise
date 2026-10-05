@@ -40,7 +40,7 @@ flowchart LR
 | Phase | What gets built | Features | Done when |
 | --- | --- | --- | --- |
 | 1. Foundation | Repository, Vite and TypeScript, Tailwind with section 7 tokens, bundled fonts, route shell, Dexie schema, content schemas and validator, 20 sample items | None yet | Content validation script passes (draft items only warn; `npm run build:release` fails on any `reviewed: null`) and tokens match section 7 exactly |
-| 2. Engine | `scheduler`, `checker`, `composer`, `readiness`, `streak` as pure functions with unit tests | F-10 and the logic behind F-08, F-09, F-15 | Tests cover every rule in section 3: recognition cap, same session retry, recovery rule, streak freeze |
+| 2. Engine | `scheduler`, `checker`, `composer`, `readiness`, `streak` as pure functions with unit tests | F-10 and the logic behind F-08, F-09, F-15 | Tests cover every rule in section 3: recognition cap, same session retry, recovery rule, streak freeze. Line coverage of `/domain` is at least 95 percent |
 | 3. Screens | Navigation shell, S01 to S03, S05 to S07, exercises E1 to E6 and E9, typed answers only, seeded demo | F-01 to F-08, F-11, F-15, F-18, basic F-14 | A full session runs start to finish, offline, with no AI and no speech |
 | 4. Speech and AI | Speech services, E7, E8, scenarios, Mistake Bank screen and drills, `/api/judge`, cache, quotas, fallbacks | F-09, F-12, F-13 | Every failure case in section 9 has been triggered by hand and behaves as written |
 | 5. Release | Full Progress, Daily Case, Hindi hints, PWA, Body Map and Confusable pairs if time allows, feedback form, export and import, performance check, deploy | F-14, F-16, F-17, F-19, F-23, F-24, then F-20, F-21, F-22 | The acceptance run in section 12 passes on a real phone |

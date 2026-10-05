@@ -12,13 +12,44 @@ The app uses the Gemini API for exactly two runtime jobs, both judging what the 
 
 Every answer goes through this order. The first step that gives a verdict wins.
 
-1. **Normalise.** Lowercase, trim, fold punctuation. Treat ä, ö, ü, ß as equal to ae, oe, ue, ss. For nouns, accept the answer with or without the article unless the exercise is about the article.
+1. **Normalise.** Lowercase, trim, drop the punctuation . , ! ? ; : and quotation marks (digits and "/" are kept), collapse spaces. Treat ä, ö, ü, ß as equal to ae, oe, ue, ss. For nouns, accept the answer with or without the article unless the exercise is about the article.
 2. **Exact match** against the accepted answers in the content file.
 3. **Close match.** Levenshtein distance 1 for words up to 7 letters, or 2 for longer words, counts as `spelling`: marked wrong, correct spelling shown.
-4. **AI judge**, only if the exercise is E8 spoken, E10, or a free reply, and steps 2 and 3 found nothing.
+4. **AI judge**, only if the exercise is E10, E8 spoken, or an A2 sentence item in E7, and steps 2 and 3 found nothing. A same-words-wrong-order answer is not a close match, so it still goes to the AI when the exercise allows it.
 5. **Fallback** when the AI is unavailable: mark as "Not matched", show the accepted answers, and let the learner mark "I was right" once per session. Never block the session.
 
-Exercises E1 to E7 and E9 never call the AI. Vocabulary and article checking is fully rule based.
+Exercises E1 to E6 and E9 never call the AI. E7 calls it only for A2 sentence items and E8 only when spoken. Vocabulary and article checking is fully rule based.
+
+### How each exercise is checked
+
+The checker only decides whether the AI is needed. It never calls it. Its result has `verdict` (`correct`, `wrong` or `undecided`), `errorType`, `needsAI`, `expected` (the answer to show) and `feedback`. `undecided` appears only when `needsAI` is true, and then `errorType` and `feedback` are the rule based fallback for section 6 step 5.
+
+- **E2 to E5 (tapped options).** The tapped option is compared with the right option after normalisation. There is no close match. A wrong E2 pick is `article`, a wrong E4 pick is `listening`, a wrong E3 or E5 pick is `meaning`.
+- **E9 (digits).** Compared after number normalisation: a comma and a dot are the same decimal mark, runs of spaces collapse, and other separators such as "/" stay as typed. Anything wrong is `number`.
+- **Nouns, typed or spoken (E6, E7).** The article is optional. A right noun with a wrong article is `article`. A noun within the Levenshtein limit but not equal is `spelling`. Anything else is `meaning`. When spoken, `article` stays `article` and every other miss is `speech_mismatch`.
+- **Sentence answers (E8, E10, A2 sentence items in E7, and any other answer that is not a noun).** Run these in order and use the first that matches:
+  1. Exact match after normalisation: `correct`.
+  2. `word_order`: the learner's words are the same multiset as an accepted answer's words, in a different order.
+  3. `spelling`: the same number of words as an accepted answer, exactly one word differs, and that word is within the Levenshtein limit (1 for words up to 7 letters, 2 beyond, measured on the accepted word).
+  4. Anything else: `meaning`.
+
+  A single spoken word that is not a noun is `speech_mismatch` for every miss, because it is more likely a recognition problem than a gap in knowledge.
+- **Spoken answers** arrive as up to 3 alternatives. Any exact match makes the answer correct. Otherwise the most informative miss is kept: a close match first, then `article` or `word_order`, then the rest.
+- **needsAI** is true only when there was no exact or close match and the exercise is E10, or E8 spoken, or an A2 sentence item in E7. E10 never has an item, so it gets `feedback: null`.
+- **Feedback sentence.** The item's `mistakeNotes` entry for that error type if present, otherwise a fixed template built only from content fields. Never invent German beyond these:
+
+| Error type | Template |
+| --- | --- |
+| `article` | "{de} takes {article}: {article} {de}." |
+| `meaning` | "{de} means {en}." |
+| `spelling` | "Check the spelling: {de}." |
+| `listening` | "You heard {de}. It means {en}." |
+| `number` | "The answer is {accepted[0]}." |
+| `word_order` | "Correct order: {accepted[0]}." |
+| `grammar` | "Correct form: {accepted[0]}." |
+| `speech_mismatch` | "Heard something different. Try: {accepted[0]}." |
+
+  A field that already ends in a full stop, question mark or exclamation mark does not get a second full stop. If a template needs a field the item does not have, `feedback` is `null`. The rules never assign `grammar`. Only the AI or an item's own note does.
 
 ### The two AI jobs
 
@@ -125,7 +156,7 @@ Pin exact versions at install time and record them in the repository. Do not add
 | Validation | Zod | Content files and `/api/judge` payloads |
 | Icons and fonts | `lucide-react`, `@fontsource` packages | Fonts bundled, not loaded from a CDN |
 | Tests | Vitest for logic, Playwright for 4 to 5 end to end paths | Playwright runs Chromium only. Phase 1 adds a route smoke test at 390 px and 1280 px |
-| Tooling | `@vitejs/plugin-react`, `@tailwindcss/vite`, `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-config-prettier`, `globals`, `prettier`, `@types/react`, `@types/react-dom`, `@types/node` | Node 22.18 or later. Scripts in `/scripts` run with Node's built-in TypeScript type stripping, no `tsx` |
+| Tooling | `@vitejs/plugin-react`, `@tailwindcss/vite`, `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-config-prettier`, `globals`, `prettier`, `@types/react`, `@types/react-dom`, `@types/node`, `@vitest/coverage-v8` (same version as Vitest) | Node 22.18 or later. Scripts in `/scripts` run with Node's built-in TypeScript type stripping, no `tsx` |
 | Server | One Vercel serverless function at `/api/judge` | Holds `GEMINI_API_KEY`, `GEMINI_MODEL`, `ALLOWED_ORIGIN` |
 | Hosting | Vercel free plan | Preview deploys for testers |
 
@@ -137,6 +168,7 @@ Pin exact versions at install time and record them in the repository. Do not add
   /components   shared interface parts (Button, OptionTile, ArticleTag...)
   /features     onboarding, session, scenarios, mistakes, progress, settings
   /domain       scheduler.ts, checker.ts, composer.ts, readiness.ts, streak.ts  (pure functions)
+                types.ts, eligibility.ts, dates.ts, rng.ts, text.ts  (shared types and small helpers)
   /data         db.ts (Dexie schema), repositories
   /content      topics.json, items.json, scenarios.json, confusables.json
   /services     speech.ts, tts.ts, ai.ts, events.ts
@@ -146,7 +178,7 @@ Pin exact versions at install time and record them in the repository. Do not add
 /tests
 ```
 
-All logic that decides what the learner sees next (scheduler, checker, composer, readiness, streak) lives in `/domain` as pure functions with no browser or database calls. That is what gets unit tests.
+All logic that decides what the learner sees next (scheduler, checker, composer, readiness, streak) lives in `/domain` as pure functions with no browser or database calls. That is what gets unit tests. Time and randomness are always passed in as arguments (`now`, `day`, `rng`), and ESLint blocks `/src/domain` from importing `/src/data`, `/src/services`, React or Dexie, and from using browser globals, `Date` or `Math.random`. `/src/data` imports its row types from `/src/domain/types.ts`, not the other way round. Line coverage of `/src/domain` must stay at or above 95 percent (`npm run test:coverage`).
 
 ### Data model (IndexedDB tables)
 
@@ -159,7 +191,7 @@ Content is static JSON in the bundle. Only learner state is stored.
 | `attempts` | `id` | sessionId, itemId, exercise (E1 to E10), correct, errorType, answer, ts, aiUsed |
 | `sessions` | `id` | startedAt, endedAt, mode (`shift_break`, `topic` for a session started from Practice, `drill` for a Mistake Bank group, `scenario`, `daily_case`; an Extra round is a `shift_break` session), itemIds, completed |
 | `days` | `date` (local YYYY-MM-DD) | exercisesDone, sessions |
-| `streak` | `id` | current, best, freezes, lastCountedDate, freezeDays (list of local dates saved by a freeze) |
+| `streak` | `id` | current, best, freezes, lastCountedDate (the last date counted or covered by a freeze), freezeDays (list of local dates saved by a freeze) |
 | `aiCache` | `key` | response, createdAt |
 | `aiUsage` | `date` | count |
 | `feedback` | `id` | ts, screen, text, rating |
@@ -173,11 +205,16 @@ Store the schema version in Dexie and write a migration for every change. The ex
 
 | Function | Input | Output |
 | --- | --- | --- |
-| `applyAnswer` | item state, `{correct, format, now}` where format is `recognition` or `production` | New item state with box, dueAt, state and mistake bank flags set by section 3 |
-| `composeSession` | all items, all states, now, settings | Ordered list of exercises, each with item id and exercise type |
-| `checkAnswer` | exercise, learner text | `{verdict, errorType, needsAI}` using the order in section 6 |
-| `computeReadiness` | topic id, all states | Percent of items in the topic that are strong |
-| `updateStreak` | streak, days, today | New streak, freezes and a note if a freeze was used |
+| `completeLearnCard` | item state, now | The item in box 1, Learning, due now. E1 is not an answer |
+| `applyAnswer` | item state, `{correct, format, now, day, errorType}` where format is `recognition` or `production` and `day` is `{date, startMs}` for the local day | `{state, bank}`: the new item state with box, dueAt, state and mistake bank fields set by section 3, and `bank` is `entered`, `recovered` or null. Throws for a New item |
+| `applyRetry` | item state, correct | `{state, outcome}`: the state unchanged, and `fixed_for_now` or `still_tricky` |
+| `scheduleRetry` | queue, index, item, rng, audio | A new queue with the retry inserted after 2 other exercises, or appended |
+| `composeSession` | `{items, states, now, day, settings, newItemsToday, rng}` | `{slots, speakingShortfall}`: ordered exercises, each with item id and exercise type, plus `retry` or `followUp` marks |
+| `checkAnswer` | a request for the exercise (tapped option, typed or spoken answers, or digits) | `{verdict, errorType, needsAI, expected, feedback}` using the order in section 6 |
+| `computeReadiness` | topic id, all items, all states | Percent of the topic's items that are Strong, rounded, 0 for an empty topic |
+| `a2Unlocked`, `placementLevel` | items and states, or the placement score | Whether 60 percent of A1 items are in box 3 or higher, and `A1` or `offer_A2` |
+| `dueWithin`, `nextReviewAt` | states, now (and a window) | How many items are due in the window, and the next due time after now |
+| `updateStreak` | streak, days, today | `{streak, freezeUsedOn, todayCounted}`: the new streak and freezes, and the dates a freeze covered |
 
 A day is the device's local calendar day. Midnight local time ends it. Dates are stored as `YYYY-MM-DD` strings in local time and timestamps as milliseconds.
 

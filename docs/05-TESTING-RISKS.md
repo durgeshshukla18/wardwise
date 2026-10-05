@@ -10,7 +10,7 @@ Three layers: automated tests for the learning rules, a manual acceptance run on
 
 ### Automated tests (Vitest)
 
-These cases are the contract for `/domain`. Each must pass before Gate 2.
+These cases are the contract for `/domain`. Each must pass before Gate 2. Each is its own named test in `tests/domain`, with its case number in the name (for example `#12 ...`).
 
 | # | Given | When | Then |
 | --- | --- | --- | --- |

@@ -63,7 +63,17 @@ const BANNED = [
 function collect(value: unknown, found: string[] = []): string[] {
   if (typeof value === 'string') found.push(value);
   else if (typeof value === 'function') {
-    for (const args of [[0], [1], [2], [7], ['Anna'], [10, 3], [1, 1]]) {
+    for (const args of [
+      [0],
+      [1],
+      [2],
+      [7],
+      ['Anna'],
+      [10, 3],
+      [1, 1],
+      ['T01', 'A1', 3],
+      ['der Kopf'],
+    ]) {
       try {
         collect((value as (...a: unknown[]) => unknown)(...args), found);
       } catch {

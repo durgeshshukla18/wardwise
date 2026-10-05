@@ -27,3 +27,12 @@ export function pick<T>(items: readonly T[], rng: Rng): T {
   if (items.length === 0) throw new RangeError('Cannot pick from an empty list');
   return items[Math.floor(rng() * items.length)] as T;
 }
+
+/** A stable number from a list of parts, for example a session id and a slot number (FNV-1a). */
+export function hashSeed(...parts: (string | number)[]): number {
+  let hash = 2166136261;
+  for (const char of parts.join('|')) {
+    hash = Math.imul(hash ^ char.codePointAt(0)!, 16777619) >>> 0;
+  }
+  return hash >>> 0;
+}

@@ -120,6 +120,16 @@ How the composer applies this:
 
 Number dictation items therefore get E1, E3, E4 and E9 only.
 
+### Answer options
+
+The options for E2 to E5 are built by a pure function that takes a random generator. Rules, in order:
+
+1. The right answer is always included once. Options never repeat the same English meaning or the same German text.
+2. The other options come from the same topic and kind, then the same level and kind, then any item of the same kind. If the content has too few items, fewer options are returned.
+3. E2 has no distractors: its options are always der, die and das, in that order.
+4. E5 options are German words and E3 and E4 options are English meanings. E5 is only used when the item's German word appears as a whole word in its `exampleDe`, so the gap can be built by removing it.
+5. The options are shuffled, and the order is the same for the same seed. The right answer is not always in the same position.
+
 The app never shows a "you are finished" screen. When today's session is done it shows when the next review is due and offers an optional Extra round.
 
 ### Placement

@@ -16,7 +16,7 @@ export function isNumberItem(item: Pick<Item, 'spoken' | 'accepted'>): boolean {
 export function gapIndex(item: Pick<Item, 'kind' | 'de' | 'exampleDe'>): number | null {
   if (item.kind !== 'word') return null;
   const target = normalise(item.de);
-  const index = tokens(item.exampleDe).indexOf(target);
+  const index = item.exampleDe.split(/\s+/).findIndex((word) => normalise(word) === target);
   return index === -1 ? null : index;
 }
 

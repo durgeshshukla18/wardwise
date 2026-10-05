@@ -210,6 +210,7 @@ Store the schema version in Dexie and write a migration for every change. The ex
 | `applyRetry` | item state, correct | `{state, outcome}`: the state unchanged, and `fixed_for_now` or `still_tricky` |
 | `scheduleRetry` | queue, index, item, rng, audio | A new queue with the retry inserted after 2 other exercises, or appended |
 | `composeSession` | `{items, states, now, day, settings, newItemsToday, rng}` | `{slots, speakingShortfall}`: ordered exercises, each with item id and exercise type, plus `retry` or `followUp` marks |
+| `buildOptions`, `buildGap` | exercise (E2 to E5), item, all items, rng, option count | The options with the right one marked, in a stable shuffled order. For E5, the example sentence with the word removed |
 | `checkAnswer` | a request for the exercise (tapped option, typed or spoken answers, or digits) | `{verdict, errorType, needsAI, expected, feedback}` using the order in section 6 |
 | `computeReadiness` | topic id, all items, all states | Percent of the topic's items that are Strong, rounded, 0 for an empty topic |
 | `a2Unlocked`, `placementLevel` | items and states, or the placement score | Whether 60 percent of A1 items are in box 3 or higher, and `A1` or `offer_A2` |
